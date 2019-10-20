@@ -11,6 +11,7 @@ import EditProfileScreen from '../component/EditProfileScreen';
 import CreateEpisode from '../component/CreateEpisode';
 import EditWebtoon from '../component/EditWebtoon';
 import EditEpisode from '../component/EditEpisode';
+import SearchScreen from '../component/SearchScreen'
 import Share from 'react-native-share';
 
 
@@ -133,6 +134,12 @@ const UserRoute = createStackNavigator({
         }
       }
    },
+   Search: {
+      screen: SearchScreen,
+      navigationOptions: {
+         header : null
+     }
+   }
 })
 
 export default  UserRoute

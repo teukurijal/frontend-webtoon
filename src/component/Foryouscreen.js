@@ -9,23 +9,22 @@ import {
     Dimensions,
     Image,
     FlatList,
-    TouchableOpacity
+    TouchableOpacity,
+    RefreshControl
 } from 'react-native';
-
 import Carousel from 'react-native-banner-carousel'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axiosInstance from '../service/baseUrl'
 import {AsyncStorage} from 'react-native'
 
+
+
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
- 
 const banners =[
 
     'https://swebtoon-phinf.pstatic.net/20190708_212/15625801951630WaKO_JPEG/banner_10x8.jpg',
     'https://swebtoon-phinf.pstatic.net/20190905_299/15676636851905DKXg_JPEG/06_banner_10x8.jpg',
-    'https://akcdn.detik.net.id/community/media/visual/2019/04/03/dac43146-7dd4-49f4-89ca-d81f57b070fc.jpeg?w=770&q=90',
-    'https://akcdn.detik.net.id/community/media/visual/2019/04/03/dac43146-7dd4-49f4-89ca-d81f57b070fc.jpeg?w=770&q=90'
 ]
 
 
@@ -41,17 +40,30 @@ class ForyouScreen extends Component {
             position:1,
             interval: null,
             disbaledbtn: true,
+            isRefreshing: false,
+            searchtext:''
         }
     }
 
    componentDidMount= async () => {
-    this.setState({
-        token: await AsyncStorage.getItem('Token')
+        this.setState({
+            token: await AsyncStorage.getItem('Token')
         });
-    
-    this.onFavorite();
-    this.onToons();
-    this.onBanners();
+        this.requestData();
+    }
+
+    requestData () {
+        this.onFavorite();
+        this.onToons();
+        this.onBanners();
+    }
+
+    refreshData () {
+        this.setState({ isRefreshing: true })
+        this.requestData()
+        setTimeout(() => {
+            this.setState({ isRefreshing: false })
+        }, 1000);
     }
 
     onFavorite = async () => {
@@ -94,6 +106,10 @@ class ForyouScreen extends Component {
         });
     }
 
+    handleSeacrh(text) {
+        this.setState({searchtext: text})
+    }
+
     renderPage(image, index) {
         return (
             <View key={index}>
@@ -104,126 +120,185 @@ class ForyouScreen extends Component {
 
     render() {
         return (
-        
-            <SafeAreaView style={{flex:1}}>
-                <View style={{flex:1}}>
-                    <View style={{height:50,
-                    borderBottomColor: '#dddddd',
-                    marginVertical: 6 }}>
-                            <View style={{flexDirection:'row-reverse', padding: 1, 
-                            backgroundColor:'white',marginHorizontal: 10,
-                            marginVertical: 1,
-                            shadowOffset:{width:0, height:0},
-                            shadowColor: 'black',borderRadius:50,
-                            shadowOpacity: 0.2, elevation:2}}>
-                                <Icon name="search" size={20} style={{padding:10,marginRight:10}} />
-                                <TextInput
-                                underlineColorAndroid='transparent' 
-                                placeholder="Search"
-                                placeholderTextColor="grey"
-                                style={{ flex:1, fontWeight:'900',marginLeft:20, 
-                                backgroundColor:'white'}} />
-                            </View>
-                    </View>
-                        <ScrollView
-                         scrollEventThrottle={0}
-                         showsVerticalScrollIndicator={false}>
-                        <View>
-                                <View style={{flex:1}}> 
-                                    <View style={styles.container}>
-                                        <Carousel
-                                            autoplay
-                                            autoplayTimeout={3000}
-                                            loop
-                                            index={0}
-                                            pageSize={350}
-                                        >
-                                            {banners.map((image, index) => this.renderPage(image, index))}
-                                        </Carousel>
-                                    </View>
-                                </View>
-                                <View style={{flex:2}}>
-
-                                    <View style={{marginTop: 15, paddingHorizontal: 5,}}>
-                                        <Text style={{fontSize: 24, marginBottom: 5,marginLeft:10}}>
-                                        Favorite Toons
-                                        </Text>
-                                    </View>
-                                    <View>
-                                        <SafeAreaView>
-                                            <FlatList
-                                                data={this.state.favorites}
-                                                horizontal={true}
-                                                showsHorizontalScrollIndicator={false}
-                                                renderItem={({item}) =>
-                                                <TouchableOpacity 
-                                                onPress={() => this.props.navigation.navigate('DetailScreen',{image:item.image, title:item.title, toonid: item.id})}>
-                                                    <View style={{marginHorizontal:5, backgroundColor:'white', borderRadius:10,borderWidth: 0.5}}>
-                                                        <Image 
-                                                        style={{width:150, 
-                                                        height:120, padding:10, 
-                                                        borderTopLeftRadius:10, 
-                                                        borderTopRightRadius:10}} 
-                                                        source={{uri : item.image}}/>
-                                                        <View style={{width : 100,alignItems:'center'}}>
-                                                            <Text 
-                                                            style={{ justifyContent:'center',fontSize: 14, 
-                                                            marginTop:5,textAlign:'center'}}>{item.title}</Text>
-                                                        </View>
-                                                    </View>
-                                                </TouchableOpacity>
-                                                }
-                                                keyExtractor={(item, index) => index.toString()}
-                                            />
-                                        </SafeAreaView>
-                                    </View>
-
-                                    <View style={{marginTop: 15, paddingHorizontal: 5,}}>
-                                        <Text style={{fontSize: 24,marginLeft:10, marginBottom:5}}>
-                                        New episodes
-                                        </Text>
-                                    </View>
-                                    <View>
-
-                                    <SafeAreaView>
-                                        <FlatList
-                                             data={this.state.toons}
-                                             horizontal={false}
-                                             showsHorizontalScrollIndicator={false}
-                                             renderItem={({item}) =>
-                                            <TouchableOpacity onPress={() =>this.props.navigation.navigate('DetailScreen',{image:item.image, title:item.title, toonid: item.id})}>
-                                                <View style={{backgroundColor:'white',marginHorizontal:5, marginVertical:4, 
-                                                flex:1, flexDirection:'row', borderRadius:10,borderTopWidth:0}}>
-                                                    <View>
-                                                        <Image style={{width:90, height:90,marginLeft:1,borderRadius:20}} source={{uri : item.image}}/>
-                                                    </View>
-                                                   
-                                                    <View style={{flexDirection: 'column',alignItems: 'flex-start',justifyContent:'center'}}>
-                                                        <View style={{marginHorizontal:15}}>
-                                                            <Text style={{fontSize:17, marginBottom:5}}>{item.title}</Text>
-                                                        </View>
-                                                        <View>
-                                                            <TouchableOpacity onPress={()=>alert('ad to favorite')} >
-                                                            <View style={styles.btnblue}>
-                                                                    <Icon name='plus' size={12} />
-                                                                    <Text> Favorite</Text>
-                                                            </View>
-                                                        </TouchableOpacity>
-                                                        </View>
-                                                    </View>
-                                                </View> 
-                                            </TouchableOpacity>
-                                            }                
-                                            keyExtractor={(item, index) => index.toString()}
-                                            />                              
-                                        </SafeAreaView>
-
-                                    </View>
-                                </View>
-                        </View>
-                    </ScrollView>
+            <SafeAreaView style={{
+                position: 'relative',
+                flex: 1,
+                zIndex: 0
+            }}>
+                <View
+                    style={{
+                        flexDirection:'row',
+                        position: "absolute",
+                        right: 0,
+                        padding: 1,
+                        marginTop: 10,
+                        marginRight: 10,
+                        zIndex: 2
+                    }} >
+                    <TouchableOpacity
+                        style={{
+                            padding: 10,
+                            elevation: 2
+                        }}
+                        onPress={() => this.props.navigation.navigate('Search')}>
+                            <Icon
+                                name="search"
+                                size={23}
+                                style={{
+                                    color: 'white'
+                                }}
+                            />
+                    </TouchableOpacity>
                 </View>
-            </SafeAreaView>
+                <ScrollView
+                    scrollEventThrottle={0}
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => this.refreshData()} />
+                    }>
+                <View>
+                        <View style={{flex:1}}>
+                            <View style={styles.container}>
+                                <Carousel
+                                    autoplay
+                                    autoplayTimeout={3000}
+                                    loop
+                                    index={0}
+                                    pageSize={350}
+                                >
+                                    {banners.map((image, index) => this.renderPage(image, index))}
+                                </Carousel>
+                            </View>
+                        </View>
+                        <View style={{flex:2}}>
+                            <View
+                                style={{
+                                    marginTop: 15,
+                                    paddingHorizontal: 5,}}>
+                                <Text
+                                    style={{
+                                        fontSize: 24,
+                                        marginBottom: 5,
+                                        marginLeft:10}}>
+                                        Favorite Toons
+                                </Text>
+                            </View>
+                            <View>
+                                <SafeAreaView>
+                                    <FlatList
+                                        data={this.state.favorites}
+                                        horizontal={true}
+                                        showsHorizontalScrollIndicator={false}
+                                        renderItem={({item}) =>
+                                        <TouchableOpacity
+                                        onPress={() => this.props.navigation.navigate('DetailScreen',
+                                            {image:item.image, title:item.title, toonid: item.id})}>
+                                            <View style={{
+                                                marginHorizontal:5,
+                                                backgroundColor:'white',
+                                                borderRadius:10,
+                                                borderWidth: 0.5}}>
+                                                <Image
+                                                    source={{uri : item.image}}
+                                                    style={{
+                                                        width:150,
+                                                        height:120, padding:10,
+                                                        borderTopLeftRadius:10,
+                                                        borderTopRightRadius:10}}/>
+                                                <View style={{width : 100,alignItems:'center'}}>
+                                                    <Text
+                                                        style={{
+                                                            justifyContent:'center',
+                                                            fontSize: 14,
+                                                            marginTop:5,
+                                                            textAlign:'center'}}>
+                                                            {item.title}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </TouchableOpacity>
+                                        }
+                                        keyExtractor={(item, index) => index.toString()}
+                                    />
+                                </SafeAreaView>
+                            </View>
+                            <View
+                                style={{
+                                    marginTop: 15,
+                                    paddingHorizontal: 5,}}>
+                                <Text 
+                                style={{
+                                    fontSize: 24,
+                                    marginLeft:10, 
+                                    marginBottom:5}}>
+                                    New episodes
+                                </Text>
+                            </View>
+                            <View>
+                            <SafeAreaView>
+                                <FlatList
+                                        data={this.state.toons}
+                                        horizontal={false}
+                                        showsHorizontalScrollIndicator={false}
+                                        renderItem={({item}) =>
+                                    <TouchableOpacity
+                                    onPress={() =>this.props.navigation.navigate('DetailScreen',{image:item.image, title:item.title, toonid: item.id})}>
+                                        <View
+                                            style={{
+                                                backgroundColor:'white',
+                                                marginHorizontal:5,
+                                                marginVertical:4,
+                                                flex:1,
+                                                flexDirection:'row',
+                                                borderRadius:10,
+                                                borderTopWidth:0}}>
+                                            <View>
+                                                <Image
+                                                    source={{uri : item.image}}
+                                                    style={{
+                                                        width:90,
+                                                        height:90,
+                                                        marginLeft:1,
+                                                        borderRadius:20}} />
+                                            </View>
+                                            <View
+                                                style={{
+                                                    flexDirection: 'column',
+                                                    alignItems: 'flex-start',
+                                                    justifyContent:'center'}}>
+                                                <View
+                                                    style={{
+                                                        marginHorizontal:15}}>
+                                                    <Text
+                                                        style={{
+                                                            fontSize:17,
+                                                            marginBottom:5}}>
+                                                            {item.title}
+                                                    </Text>
+                                                </View>
+                                                <View>
+                                                    <TouchableOpacity
+                                                        onPress={()=>alert('ad to favorite')} >
+                                                        <View
+                                                            style={styles.btnblue}>
+                                                                <Icon name='plus' size={12} />
+                                                                <Text> Favorite</Text>
+                                                        </View>
+                                                </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                    }
+                                    keyExtractor={(item, index) => index.toString()}
+                                    />
+                                </SafeAreaView>
+
+                            </View>
+                        </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
 
         );
     }
@@ -234,8 +309,9 @@ export default ForyouScreen;
 const styles = StyleSheet.create ({
     container: {
         justifyContent: 'center',
+        zIndex: 0,
         alignItems:'center',
-        height:250
+        height:240
     },
     btnblue: {
         padding: 8,

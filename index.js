@@ -11,6 +11,7 @@ import CreateWebtoon from './src/component/CreateWebtoon'
 import CreateEpisode from './src/component/CreateEpisode'
 import EditWebtoon from './src/component/EditWebtoon';
 import EditEpisode from './src/component/EditEpisode';
+import SearchScreen from './src/component/SearchScreen';
 import {name as appName} from './app.json';
 
 AppRegistry.registerComponent(appName, () => App);

@@ -79,25 +79,24 @@ class ForyouScreen extends Component {
                                                     <View>
                                                         <Image style={{width:80, height:90, borderRadius:15}} source={{uri : item.image}}/>
                                                     </View>
-                                                   
                                                     <View style={{flexDirection: 'column',alignItems: 'flex-start'}}>
                                                         <View style={{marginHorizontal:15}}>
                                                             <Text style={{fontSize:17, fontWeight:'bold', marginBottom:10}}>{item.title}</Text>
                                                             <Text style={{fontSize:12, fontWeight:'bold', marginBottom:10}}>{item.count} Favorite</Text>
                                                         </View>
                                                     </View>
-                                                </View> 
+                                                </View>
                                             </TouchableOpacity>
-                                            }                
+                                            }
                                             keyExtractor={(item, index) => index.toString()}
-                                            />                              
+                                            />
                                         </SafeAreaView>
                                     </View>
                                 </View>
                         </View>
                     </ScrollView>
                 </View>
-                <View style={{backgroundColor:'none', 
+                <View style={{backgroundColor:'none',
                             position: 'absolute',
                             width: 60,
                             height: 60,
