@@ -22,7 +22,6 @@ class SearchScreen extends Component {
 
     constructor() {
         super()
-       
         this.state = {
             data: '',
         }

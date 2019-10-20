@@ -125,31 +125,7 @@ class ForyouScreen extends Component {
                 flex: 1,
                 zIndex: 0
             }}>
-                <View
-                    style={{
-                        flexDirection:'row',
-                        position: "absolute",
-                        right: 0,
-                        padding: 1,
-                        marginTop: 10,
-                        marginRight: 10,
-                        zIndex: 2
-                    }} >
-                    <TouchableOpacity
-                        style={{
-                            padding: 10,
-                            elevation: 2
-                        }}
-                        onPress={() => this.props.navigation.navigate('Search')}>
-                            <Icon
-                                name="search"
-                                size={23}
-                                style={{
-                                    color: 'white'
-                                }}
-                            />
-                    </TouchableOpacity>
-                </View>
+                
                 <ScrollView
                     scrollEventThrottle={0}
                     showsVerticalScrollIndicator={false}
@@ -159,6 +135,31 @@ class ForyouScreen extends Component {
                 <View>
                         <View style={{flex:1}}>
                             <View style={styles.container}>
+                                <View
+                                    style={{
+                                        flexDirection:'row',
+                                        position: "absolute",
+                                        right: 0,
+                                        padding: 1,
+                                        marginTop: 10,
+                                        marginRight: 10,
+                                        zIndex: 2
+                                    }} >
+                                    <TouchableOpacity
+                                        style={{
+                                            padding: 10,
+                                            elevation: 2
+                                        }}
+                                        onPress={() => this.props.navigation.navigate('Search')}>
+                                            <Icon
+                                                name="search"
+                                                size={23}
+                                                style={{
+                                                    color: 'white'
+                                                }}
+                                            />
+                                    </TouchableOpacity>
+                                </View>
                                 <Carousel
                                     autoplay
                                     autoplayTimeout={3000}
@@ -308,9 +309,7 @@ export default ForyouScreen;
 
 const styles = StyleSheet.create ({
     container: {
-        justifyContent: 'center',
         zIndex: 0,
-        alignItems:'center',
         height:240
     },
     btnblue: {
