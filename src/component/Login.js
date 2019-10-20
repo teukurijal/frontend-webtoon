@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Entypo';
 import axiosInstance from '../service/baseUrl';
 import {AsyncStorage} from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
-
+import Toast from 'react-native-easy-toast'
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -32,23 +32,27 @@ class Login extends Component {
   }
 
   handleSubmit = () => {
-    axiosInstance({
-      method: 'POST',
-      url: '/login',
-      data: {
-        email: this.state.useremail,
-        password: this.state.password,
-      },
-    })
-      .then(response => {
-        //console.log(response);
-        AsyncStorage.setItem('Token', response.data.token);
-        this.props.navigation.navigate('ForYou');
+    if (this.state.validatedemail && this.state.validatedpass) {
+      axiosInstance({
+        method: 'POST',
+        url: '/login',
+        data: {
+          email: this.state.useremail,
+          password: this.state.password,
+        },
       })
-      .catch(error => {
-        alert(error);
-        //console.log(error);
-      });
+        .then(response => {
+          //console.log(response);
+          AsyncStorage.setItem('Token', response.data.token);
+          this.props.navigation.navigate('ForYou');
+        })
+        .catch(error => {
+          alert(error);
+          //console.log(error);
+        });
+      } else {
+        this.refs.toast.show('sultan jelek');
+    }
   };
 
   handleVisibelpassword() {
@@ -87,11 +91,15 @@ class Login extends Component {
   };
 
   render() {
-    const disableLogin = this.state.validatedemail && this.state.validatedpass;
+    const disableLogin = true
     ////console.log(this.props.navigation)
 
     return (
       <KeyboardAvoidingView  style={styles.container} behavior="padding" enabled>
+        <Toast 
+          ref="toast"
+          style={{backgroundColor:'#E04A3A'}}
+          />
         <View style={styles.logoContainer}>
           <Image
             style={{
@@ -216,7 +224,7 @@ const styles = StyleSheet.create({
   btn1: {
     width: '80%',
     padding: 15,
-    backgroundColor: 'grey',
+    backgroundColor: '#09CE61',
     borderRadius: 50,
     elevation: 3,
     marginTop: 35,

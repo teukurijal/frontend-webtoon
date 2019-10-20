@@ -14,19 +14,8 @@ import ProfileScreen from '../component/ProfileScreen';
 const ProfileStack = createStackNavigator({
   ProfileStack: {
     screen: ProfileScreen,
-    navigationOptions: ({navigation}) => {
-      return {
-        headerTitle: 'Profile',
-        headerRight: (
-          <Icon
-            name="pencil"
-            size={25}
-            style={{marginRight: 20}}
-            color="#000000"
-            onPress={() => navigation.navigate('EditProfileScreen')}
-          />
-        ),
-      };
+    navigationOptions: {
+      header: null
     },
   },
 });

@@ -9,6 +9,7 @@ export default class ProfileScreen extends Component {
 
     this.state = {
       image: {uri: 'https://i.ibb.co/rdjb1Yt/avatar.jpg'},
+      name: 'Teuku Rijal'
     };
   }
 
@@ -16,50 +17,65 @@ export default class ProfileScreen extends Component {
     //console.log(this.props.navigation);
     return (
       <View style={styles.center}>
-        <View style={styles.textcontainer}>
-          <Image
-            style={{
-              width: 165,
-              height: 165,
-              borderRadius: 200 / 2,
-              overflow: 'hidden',
-              borderWidth: 3,
-              borderColor: 'black',
-            }}
-            source={this.state.image}
-          />
-        </View>
-        <View style={{alignItems: 'center', marginTop: 15}}>
-          <Text style={{fontSize: 35, marginBottom: 20, color: 'black'}}>
-            Your Name
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate('WebtoonCreation')}>
-          <View style={styles.btncontainer}>
-            <View
+        <View style={styles.profilecontainer}>
+          <View >
+            <Image
               style={{
-                padding: 12,
-                flexDirection: 'row-reverse',
-                justifyContent: 'center',
-              }}>
-              <View>
-                <Icon name="arrow-right" size={21} />
-              </View>
-              <View style={{flex: 1}}>
-                <Text style={{fontSize: 15}}>My Webtoon Creation</Text>
-              </View>
-            </View>
+                width: 100,
+                height: 100,
+                borderRadius: 200 / 2,
+                overflow: 'hidden',
+                borderWidth: 3,
+                borderColor: 'black',
+              }}
+              source={this.state.image}
+            />
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPressOut={() => this.props.navigation.navigate('Logout')}>
-          <View style={styles.btncontainer}>
-            <View style={{padding: 12}}>
-              <Text style={{fontSize: 15}}>Log Out</Text>
-            </View>
+          <View>
+            <Text style={{fontSize: 30, color: 'black', marginLeft:10}}>
+              {this.state.name}
+            </Text>
           </View>
-        </TouchableOpacity>
+        </View>
+        <View style={styles.menucontainer}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('EditProfileScreen')}
+            style={styles.menu}
+          >
+            <View style={styles.btncontainer}>
+                 <Icon name='user' color={'grey'} size={20} />
+            </View>
+            <View style={styles.btncontainer}>
+                  <Text style={{fontSize: 20}}>My Profile</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('WebtoonCreation')}
+            style={styles.menu}
+          >
+            <View style={styles.btncontainer}>
+                 <Icon name='pencil-square' color={'grey'} size={20} />
+            </View>
+            <View style={styles.btncontainer}>
+                  <Text style={{fontSize: 20}}>My Webtoon Creation</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPressOut={() => this.props.navigation.navigate('Logout')}
+            style={styles.menu}
+          >
+            <View style={styles.btncontainer}>
+                 <Icon name='sign-out' color={'grey'} size={20} />
+            </View>
+            <View 
+              style={styles.btncontainer}>
+                <Text 
+                  style={{
+                    fontSize: 20
+                  }}>Log Out</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -68,21 +84,24 @@ export default class ProfileScreen extends Component {
 const styles = StyleSheet.create({
   btncontainer: {
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    padding: 5,
-    marginVertical: 5,
-    marginHorizontal: 5,
-    elevation: 1,
-    borderWidth: 0.2,
-    borderRadius: 20,
     flexDirection: 'row',
-    alignItems: 'center',
+    marginRight:15
   },
   center: {
     justifyContent: 'center',
+    flex:1,
+    marginHorizontal:30
   },
-  textcontainer: {
-    alignItems: 'center',
-    marginTop: 50,
+  profilecontainer: {
+    flexDirection:'row',
+    alignItems:'center',
+    flex:2.5
   },
+  menucontainer: {
+    flex:3,
+  },
+  menu: {
+    marginBottom:30,
+    flexDirection:'row',
+  }
 });

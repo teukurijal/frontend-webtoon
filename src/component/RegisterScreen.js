@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
 import axiosInstance from '../service/baseUrl';
+import Toast from 'react-native-easy-toast'
 
 class RegisterScreen extends Component {
   constructor(props) {
@@ -27,24 +28,28 @@ class RegisterScreen extends Component {
   }
 
   handleSubmit = () => {
-    //var auth = (new devicesStorage)
-    axiosInstance({
-      method: 'POST',
-      url: '/register',
-      data: {
-        email: this.state.useremail,
-        password: this.state.password,
-        name: this.state.name,
-      },
-    })
-      .then(response => {
-        //console.log(response);
-        this.props.navigation.navigate('Logout');
+    if (this.state.validatedemail && this.state.validatedpass) {
+      axiosInstance({
+        method: 'POST',
+        url: '/register',
+        data: {
+          email: this.state.useremail,
+          password: this.state.password,
+          name: this.state.name,
+        },
       })
-      .catch(error => {
-        alert('Email already registered');
-        //console.log(error);
-      });
+        .then(response => {
+          //console.log(response);
+          this.props.navigation.navigate('Logout');
+        })
+        .catch(error => {
+          alert('Email already registered');
+          //console.log(error);
+        });
+    } else {
+      this.refs.toast.show('sultan jelek');
+    }
+    
   };
 
   handleVisibelpassword() {
@@ -83,11 +88,15 @@ class RegisterScreen extends Component {
   };
 
   render() {
-    const disableLogin = this.state.validatedemail && this.state.validatedpass;
+    const disableLogin = true
     ////console.log(this.props.navigation)
 
     return (
       <KeyboardAvoidingView  style={styles.container} behavior="position" enabled>
+        <Toast 
+          ref="toast"
+          style={{backgroundColor:'#E04A3A'}}
+        />
         <View style={styles.logoContainer}>
           <Image
             style={{
@@ -212,7 +221,7 @@ const styles = StyleSheet.create({
   btn1: {
     width: '80%',
     padding: 15,
-    backgroundColor: 'grey',
+    backgroundColor: '#09CE61',
     borderRadius: 50,
     elevation: 3,
     marginTop: 35,

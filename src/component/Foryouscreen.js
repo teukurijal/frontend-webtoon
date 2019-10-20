@@ -239,6 +239,7 @@ class ForyouScreen extends Component {
                           <Text
                             style={{
                               fontSize: 16,
+                              fontWeight: 'bold',
                             }}>
                             {item.title}
                           </Text>
