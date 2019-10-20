@@ -61,7 +61,7 @@ class SearchScreen extends Component {
               height: 50,
               borderBottomColor: '#dddddd',
               marginTop: 15,
-              marginVertical: 6,
+              marginVertical: 10,
             }}>
             <View
               style={{
@@ -74,7 +74,6 @@ class SearchScreen extends Component {
                 marginVertical: 1,
                 shadowOffset: {width: 0, height: 0},
                 shadowColor: 'black',
-                shadowOpacity: 0.2,
                 elevation: 2,
                 paddingHorizontal: 20,
                 borderRadius: 50,
@@ -118,11 +117,11 @@ class SearchScreen extends Component {
                           <View
                             style={{
                               backgroundColor: 'white',
-                              borderBottomWidth: 0.5,
-                              marginVertical: 4,
-                              flex: 2,
+                              flex: 1,
+                              marginBottom:10,
                               flexDirection: 'row',
-                              borderRadius: 10,
+                              borderRadius: 1,
+                              marginHorizontal:10
                             }}>
                             <View>
                               <Image
@@ -139,20 +138,27 @@ class SearchScreen extends Component {
                             </View>
                             <View
                               style={{
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
+                                flex: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginHorizontal: 20,
                               }}>
-                              <View
-                                style={{
-                                  marginHorizontal: 15,
-                                }}>
+                              <View>
                                 <Text
                                   style={{
                                     fontSize: 17,
                                     fontWeight: 'bold',
-                                    marginBottom: 10,
+                                    color: 'black'
                                   }}>
                                   {item.title}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 10,
+                                    color: 'grey',
+                                  }}>
+                                  {item.genre}
                                 </Text>
                               </View>
                             </View>

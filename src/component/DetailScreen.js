@@ -78,7 +78,12 @@ class DetailScreen extends Component {
                 </View>
               </View>
 
-              <View style={{flex: 3}}>
+              <View 
+                style={{
+                  flex: 3,
+                  marginHorizontal:1,
+                  marginVertical:1
+                }}>
                 <View>
                   <SafeAreaView>
                     <FlatList
@@ -98,35 +103,37 @@ class DetailScreen extends Component {
                           <View
                             style={{
                               backgroundColor: 'white',
-                              marginHorizontal: 4,
-                              marginVertical: 4,
-                              flex: 2,
+                              flex: 1,
                               flexDirection: 'row',
-                              borderRadius: 15,
-                              borderWidth: 0.3,
+                              borderRadius: 1,
+                              borderBottomWidth:0.5,
+                              marginBottom:1
                             }}>
                             <View>
                               <Image
                                 style={{
-                                  width: 90,
-                                  height: 90,
+                                  width: 85,
+                                  height: 85,
                                   padding: 10,
-                                  borderRadius: 15,
+                                  borderRadius: 10,
                                 }}
                                 source={{uri: item.image}}
                               />
                             </View>
                             <View
                               style={{
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
+                                flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginHorizontal: 20,
                               }}>
-                              <View style={{marginHorizontal: 15}}>
+                              <View>
                                 <Text
                                   style={{
-                                    fontSize: 18,
+                                    fontSize: 17,
                                     fontWeight: 'bold',
-                                    marginBottom: 10,
+                                    color: 'black'
                                   }}>
                                   {item.title}
                                 </Text>

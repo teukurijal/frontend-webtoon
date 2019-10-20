@@ -19,7 +19,7 @@ import {AsyncStorage} from 'react-native';
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
 
-class ForyouScreen extends Component {
+class WebtoonCreation extends Component {
   constructor() {
     super();
     this.state = {
@@ -67,7 +67,11 @@ class ForyouScreen extends Component {
           <ScrollView scrollEventThrottle={0}>
             <View>
               <View style={{flex: 3}}>
-                <View style={{marginTop: 15, paddingHorizontal: 0}}>
+                <View 
+                  style={{
+                    marginTop: 15,
+                    marginHorizontal:10
+                  }}>
                   <SafeAreaView>
                     <FlatList
                       data={this.state.webtoons}
@@ -85,45 +89,87 @@ class ForyouScreen extends Component {
                           <View
                             style={{
                               backgroundColor: 'white',
-                              marginHorizontal: 0,
-                              marginVertical: 5,
-                              flex: 2,
+                              flex: 1,
+                              marginBottom:10,
                               flexDirection: 'row',
-                              borderRadius: 15,
+                              borderRadius: 1,
                             }}>
                             <View>
                               <Image
                                 style={{
-                                  width: 80,
+                                  width: 90,
                                   height: 90,
-                                  borderRadius: 15,
+                                  padding: 10,
+                                  borderRadius: 10,
                                 }}
                                 source={{uri: item.image}}
                               />
                             </View>
                             <View
                               style={{
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
+                                flex: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginLeft: 10,
+                                marginRight:5
                               }}>
-                              <View style={{marginHorizontal: 15}}>
+                              <View
+                                style={{
+                                  fontSize: 17,
+                                  fontWeight: 'bold',
+                                  color: 'black'
+                                }}>
                                 <Text
                                   style={{
                                     fontSize: 17,
                                     fontWeight: 'bold',
-                                    marginBottom: 10,
+                                    color: 'black'
                                   }}>
                                   {item.title}
                                 </Text>
                                 <Text
                                   style={{
-                                    fontSize: 12,
-                                    fontWeight: 'bold',
-                                    marginBottom: 10,
+                                    fontSize: 10,
+                                    color: 'grey',
                                   }}>
-                                  {item.count} Favorite
+                                  {item.genre}
                                 </Text>
                               </View>
+                             
+                              <View 
+                                style={{
+                                  flexDirection:'row',
+                                }}>
+                                <TouchableOpacity
+                                onPress={() => alert('ad to favorite')}
+                                style={{
+                                  borderRadius:5,
+                                  elevation:3,
+                                  padding:8,
+                                  backgroundColor: '#09CE61',
+                                  marginRight:10
+                                }}
+                                >
+                                <Icon style={{color: '#ffffff'}}  name="trash" size={15} />
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => alert('ad to favorite')}
+                                style={{
+                                  flexDirection:'row', 
+                                  borderRadius:5,
+                                  elevation:3,
+                                  paddingHorizontal:10,
+                                  alignItems:'center',
+                                  backgroundColor: '#09CE61',
+                                  marginLeft:10
+                                }}
+                              >
+                                  <Icon style={{color: '#ffffff'}}  name="edit" size={15} />
+                                  <Text style={{fontWeight:'bold', color:'#ffffff'}}> Edit</Text>
+                              </TouchableOpacity>
+                              
+                            </View>
                             </View>
                           </View>
                         </TouchableOpacity>
@@ -150,7 +196,7 @@ class ForyouScreen extends Component {
           <Icon
             name="plus-circle"
             size={70}
-            color="#1BB4D3"
+            color="#09CE61"
             onPress={() => this.props.navigation.navigate('CreateWebtoon')}
           />
         </View>
@@ -159,19 +205,12 @@ class ForyouScreen extends Component {
   }
 }
 
-export default ForyouScreen;
+export default WebtoonCreation;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  btn: {
-    padding: 10,
-    backgroundColor: '#FFC300',
-    borderRadius: 10,
-    elevation: 3,
-    marginLeft: 10,
   },
 });

@@ -286,20 +286,18 @@ class ForyouScreen extends Component {
                             marginBottom:10,
                             flexDirection: 'row',
                             borderRadius: 1,
-
                           }}>
-                          <View
-                            style={{
-                              borderWidth: 0.4,
-                              borderRadius: 5,
-                              overflow:'hidden'
-                            }}>
+                          <View>
                             <Image
-                              source={{uri: item.image}}
                               style={{
                                 width: 90,
                                 height: 90,
+                                padding: 10,
+                                borderRadius: 10,
                               }}
+                              source={{
+                                uri: item.image}
+                              }
                             />
                           </View>
                           <View
@@ -310,9 +308,7 @@ class ForyouScreen extends Component {
                               justifyContent: 'space-between',
                               marginHorizontal: 20,
                             }}>
-                              <View
-                                style={{
-                                }}>
+                              <View>
                                 <Text
                                   style={{
                                     fontSize: 17,

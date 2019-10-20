@@ -56,31 +56,29 @@ class FavoriteScreen extends Component {
   render() {
     return (
       <SafeAreaView style={{flex: 1}}>
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, marginHorizontal:10}}>
           <View
             style={{
               height: 50,
               borderBottomColor: '#dddddd',
-              marginVertical: 6,
+              marginTop: 15,
+              marginVertical: 10,
             }}>
             <View
               style={{
-                flexDirection: 'row-reverse',
+                flexDirection: 'row',
                 padding: 1,
                 backgroundColor: 'white',
-                marginHorizontal: 10,
-                marginVertical: 1,
                 shadowOffset: {width: 0, height: 0},
                 shadowColor: 'black',
                 shadowOpacity: 0.2,
+                justifyContent: 'center',
+                alignItems: 'center',
                 elevation: 2,
+                paddingHorizontal: 20,
                 borderRadius: 50,
               }}>
-              <Icon
-                name="search"
-                size={20}
-                style={{padding: 10, marginRight: 10}}
-              />
+              
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="Search"
@@ -88,9 +86,13 @@ class FavoriteScreen extends Component {
                 style={{
                   flex: 1,
                   fontWeight: '700',
-                  marginLeft: 20,
                   backgroundColor: 'white',
                 }}
+              />
+              <Icon
+                name="search"
+                size={20}
+                style={{padding: 10}}
               />
             </View>
           </View>
@@ -115,18 +117,17 @@ class FavoriteScreen extends Component {
                           <View
                             style={{
                               backgroundColor: 'white',
-                              borderBottomWidth: 0.5,
-                              marginVertical: 4,
-                              flex: 2,
+                              flex: 1,
+                              marginBottom:10,
                               flexDirection: 'row',
-                              borderRadius: 10,
+                              borderRadius: 1,
                             }}>
                             <View>
                               <Image
                                 style={{
                                   width: 90,
                                   height: 90,
-                                  padding: 0,
+                                  padding: 10,
                                   borderRadius: 10,
                                 }}
                                 source={{uri: item.image}}
@@ -134,17 +135,32 @@ class FavoriteScreen extends Component {
                             </View>
                             <View
                               style={{
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
+                                flex: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginHorizontal: 20,
                               }}>
-                              <View style={{marginHorizontal: 15}}>
+                              <View 
+                                style={{
+                                  fontSize: 17,
+                                  fontWeight: 'bold',
+                                  color: 'black'
+                              }}>
                                 <Text
                                   style={{
                                     fontSize: 17,
                                     fontWeight: 'bold',
-                                    marginBottom: 10,
+                                    color: 'black'
                                   }}>
                                   {item.title}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 10,
+                                    color: 'grey',
+                                  }}>
+                                  {item.genre}
                                 </Text>
                               </View>
                             </View>

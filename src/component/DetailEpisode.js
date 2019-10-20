@@ -55,7 +55,7 @@ class DetailEpisode extends Component {
         renderItem={({item}) => (
           <Image
             source={{uri: item.image}}
-            style={{width: '100%', height: 500}}
+            style={{width: '100%', height:600}}
           />
         )}
         keyExtractor={item => item.id.toString()}
