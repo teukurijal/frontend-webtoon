@@ -24,20 +24,23 @@ class SearchScreen extends Component {
         super()
        
         this.state = {
-            searchtext: ''
+            data: '',
         }
     }
 
-    componentDidMount() {
-    axiosInstance({
+    request (searchtext) {
+        axiosInstance({
             method: 'GET',
             headers: {
                 'content-type': 'application/json',
             },
-            url: `/webtoons?title=${this.props.navigation.getParam('text')}`
+            url: `/webtoons?title=${searchtext}`
         }).then(result=>{
-            this.setState({searchtext: result.data})
-        });
+            this.setState({data: result.data})
+            if (!searchtext){
+                this.setState({data: ''})
+            }
+        })
     }
 
 
@@ -55,23 +58,37 @@ class SearchScreen extends Component {
                 <View style={{flex:1}}>
                     <View style={{height:50,
                     borderBottomColor: '#dddddd',
+                    marginTop: 15,
                     marginVertical: 6 }}>
-                        <View style={{flexDirection:'row-reverse', padding: 1, 
-                        backgroundColor:'white',marginHorizontal: 10,
-                        marginVertical: 1,
-                        shadowOffset:{width:0, height:0},
-                        shadowColor: 'black',
-                        shadowOpacity: 0.2, elevation:2, borderRadius: 50}}>
-                            <TouchableOpacity onPress={() => alert('sultan jelek')}>
-                                <Icon name="search" size={20} style={{padding:10,marginRight: 10}} />
-                            </TouchableOpacity>
+                        <View style={{
+                            flexDirection: 'row',
+                            padding: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            backgroundColor:'white',
+                            marginHorizontal: 10,
+                            marginVertical: 1,
+                            shadowOffset:{width:0, height:0},
+                            shadowColor: 'black',
+                            shadowOpacity: 0.2,
+                            elevation:2,
+                            paddingHorizontal: 20,
+                            borderRadius: 50}
+                        }> 
                             <TextInput
-                            underlineColorAndroid='transparent'
-                            placeholder="Search"
-                            //onChangeText={}
-                            placeholderTextColor="grey"
-                            style={{ flex:1, fontWeight:'700',marginLeft:20, 
-                            backgroundColor:'white'}} />
+                                autoFocus="true"
+                                underlineColorAndroid='transparent'
+                                placeholder="Search"
+                                onChangeText={(text) =>this.request(text)}
+                                placeholderTextColor="grey"
+                                style={{
+                                    flex:1,
+                                    fontWeight:'700',
+                                    backgroundColor:'white'}} />
+                            <TouchableOpacity 
+                                onPress={() => this.props.navigation.navigate('ForYou')}>
+                                <Text>Cancel</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                         <ScrollView
@@ -81,7 +98,7 @@ class SearchScreen extends Component {
                                 <View style={{marginTop: 15, paddingHorizontal: 5,}}>
                                 <SafeAreaView>
                                 <FlatList
-                                data={this.state.searchtext}
+                                data={this.state.data}
                                 horizontal={false}
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={({item}) =>
