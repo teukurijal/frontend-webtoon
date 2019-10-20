@@ -24,6 +24,7 @@ class WebtoonCreation extends Component {
     super();
     this.state = {
       webtoons: '',
+      token:''
     };
   }
 
@@ -136,7 +137,6 @@ class WebtoonCreation extends Component {
                                   {item.genre}
                                 </Text>
                               </View>
-                             
                               <View 
                                 style={{
                                   flexDirection:'row',
@@ -168,7 +168,6 @@ class WebtoonCreation extends Component {
                                   <Icon style={{color: '#ffffff'}}  name="edit" size={15} />
                                   <Text style={{fontWeight:'bold', color:'#ffffff'}}> Edit</Text>
                               </TouchableOpacity>
-                              
                             </View>
                             </View>
                           </View>

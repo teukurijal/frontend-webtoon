@@ -10,55 +10,44 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  AsyncStorage
 } from 'react-native';
+import axiosInstance from '../service/baseUrl';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
+
 
 class CreateWebtoon extends Component {
   constructor() {
     super();
     this.state = {
-      banners: [
-        {
-          title: 'Ghost Wife',
-          image:
-            'https://swebtoon-phinf.pstatic.net/20181026_223/1540517103219JIDOO_JPEG/10_EC8DB8EB84A4EC9DBC_ipad.jpg?type=a210',
-          count: 100,
-        },
-        {
-          title: 'Tower of God',
-          image:
-            'https://swebtoon-phinf.pstatic.net/20190318_291/1552868599909GoVLY_JPEG/10_EC8DB8EB84A4EC9DBC_ipad.jpg?type=a210',
-          count: 10,
-        },
-        {
-          title: 'Sweet Home',
-          image:
-            'https://swebtoon-phinf.pstatic.net/20180115_46/1515982322405V9H8X_JPEG/10_EC8DB8EB84A4EC9DBC_ipad.jpg?type=a210',
-          count: 12,
-        },
-        {
-          title: 'Code Adam',
-          image:
-            'https://swebtoon-phinf.pstatic.net/20190623_198/1561228729004sN096_JPEG/10_EC8DB8EB84A4EC9DBC_ipad.jpg?type=a210',
-          count: 18,
-        },
-        {
-          title: 'Demon Queen',
-          image:
-            'https://swebtoon-phinf.pstatic.net/20180821_187/1534817578859RBWsk_JPEG/10_EC8DB8EB84A4EC9DBC_ipad.jpg?type=a210',
-          count: 109,
-        },
-        {
-          title: 'UnderPrin',
-          image:
-            'https://swebtoon-phinf.pstatic.net/20140710_63/1404980105173DcuB8_JPEG/12_EC96B8EB8D94ED9484EBA6B0.jpg?type=a210',
-          count: 90,
-        },
-      ],
+      webtoons:'',
+      token:''
     };
   }
+
+  componentDidMount = async () => {
+    this.setState({
+      token: await AsyncStorage.getItem('Token'),
+    });
+
+    this.onWebtoon();
+  };
+
+  onWebtoon = async () => {
+    await axiosInstance({
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${this.state.token}`,
+      },
+      url: `/user/${1}/webtoons`,
+    }).then(result => {
+      this.setState({webtoons: result.data});
+    });
+  };
 
   renderPage(image, index) {
     return (
@@ -97,7 +86,7 @@ class CreateWebtoon extends Component {
               }}>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder="Seacrh Episode"
+                placeholder="Seacrh here"
                 placeholderTextColor="grey"
                 style={{
                   flex: 1,
@@ -117,10 +106,10 @@ class CreateWebtoon extends Component {
             style={{felx: 1}}>
             <View>
               <View style={{flex: 3}}>
-                <View style={{marginTop: 15, paddingHorizontal: 5}}>
+                <View style={{paddingHorizontal: 5}}>
                   <SafeAreaView>
                     <FlatList
-                      data={this.state.banners}
+                      data={this.state.webtoons}
                       horizontal={false}
                       showsHorizontalScrollIndicator={false}
                       renderItem={({item}) => (
@@ -131,11 +120,10 @@ class CreateWebtoon extends Component {
                           <View
                             style={{
                               backgroundColor: 'white',
-                              marginHorizontal: 15,
-                              marginVertical: 5,
-                              flex: 2,
+                              flex: 1,
+                              marginBottom:10,
                               flexDirection: 'row',
-                              borderRadius: 15,
+                              borderRadius: 1,
                             }}>
                             <View>
                               <Image
@@ -151,27 +139,55 @@ class CreateWebtoon extends Component {
 
                             <View
                               style={{
-                                flexDirection: 'column',
-                                alignItems: 'flex-start',
+                                flex: 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginLeft: 10,
+                                marginRight:5
                               }}>
-                              <View style={{marginHorizontal: 15}}>
+                              <View 
+                                style={{
+                                  fontSize: 17,
+                                  fontWeight: 'bold',
+                                  color: 'black'
+                                }}>
                                 <Text
                                   style={{
                                     fontSize: 17,
                                     fontWeight: 'bold',
-                                    marginBottom: 10,
+                                    color: 'black'
                                   }}>
                                   {item.title}
                                 </Text>
                                 <Text
                                   style={{
-                                    fontSize: 12,
-                                    fontWeight: 'bold',
-                                    marginBottom: 10,
+                                    fontSize: 10,
+                                    color: 'grey',
                                   }}>
-                                  {item.count} Favorite
+                                  {item.genre}
                                 </Text>
                               </View>
+                              <View 
+                                style={{
+                                  flexDirection:'row',
+                                }}>
+                                
+                              <TouchableOpacity
+                                onPress={() => alert('ad to favorite')}
+                                style={{
+                                  flexDirection:'row', 
+                                  borderRadius:5,
+                                  padding:5,
+                                  elevation:3,
+                                  paddingHorizontal:5,
+                                  alignItems:'center',
+                                  backgroundColor: '#09CE61',
+                                }}
+                              >
+                                  <Text style={{fontWeight:'bold', color:'#ffffff'}}>Add Episode</Text>
+                              </TouchableOpacity>
+                            </View>
                             </View>
                           </View>
                         </TouchableOpacity>
@@ -190,14 +206,6 @@ class CreateWebtoon extends Component {
               admarginVertical: 6,
               marginBottom: 0,
             }}>
-            <View>
-              <TouchableOpacity
-                onPress={() => this.props.navigation.navigate('CreateEpisode')}>
-                <View style={styles.btn1}>
-                  <Text style={{fontSize: 18}}>+ Add Episode</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
           </View>
         </View>
       </SafeAreaView>
