@@ -5,7 +5,8 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  AlertIOS,
+  Image,
+  KeyboardAvoidingView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
 import axiosInstance from '../service/baseUrl';
@@ -86,12 +87,16 @@ class RegisterScreen extends Component {
     ////console.log(this.props.navigation)
 
     return (
-      <View style={styles.center}>
-        <View style={styles.textcontainer}>
-          <Text style={{fontSize: 40}}>Register</Text>
-          <Text style={{fontSize: 16, letterSpacing: 2}}>
-            Please register your Account
-          </Text>
+      <KeyboardAvoidingView  style={styles.container} behavior="position" enabled>
+        <View style={styles.logoContainer}>
+          <Image
+            style={{
+              width: 180,
+              height: 101
+            }}
+            source={require('@assets/webtoon.png')}
+          />
+          <Text style={{fontSize: 13, color: 'rgba(0,0,0,0.7)', marginTop: 7}} >Global Digital Free Comics Service Platform</Text>
         </View>
 
         <View style={styles.emailcontainer}>
@@ -147,12 +152,12 @@ class RegisterScreen extends Component {
             onPress={this.handleSubmit.bind(this)} //() => this.props.navigation.navigate('ForYou')
             disabled={disableLogin ? false : true}
             style={disableLogin ? styles.btn2 : styles.btn1}>
-            <Text style={{fontSize: 10}} style={{fontSize: 18}}>
+            <Text style={{fontSize: 18, color: 'white'}}>
               Register
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </KeyboardAvoidingView >
     );
   }
 }
@@ -161,28 +166,29 @@ export default RegisterScreen;
 
 const styles = StyleSheet.create({
   emailcontainer: {
+    width: '80%',
     alignItems: 'center',
     backgroundColor: '#ffffff',
     padding: 5,
-    marginVertical: 12,
-    marginHorizontal: 10,
-    elevation: 8,
+    marginVertical: 5,
+    elevation: 3,
     borderRadius: 50,
     flexDirection: 'row',
+    alignSelf: 'center'
   },
   passwordcontainer: {
+    width: '80%',
     backgroundColor: '#ffffff',
     padding: 5,
-    marginVertical: 12,
-    marginHorizontal: 10,
-    elevation: 8,
+    marginVertical: 5,
+    elevation: 3,
     borderRadius: 50,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignSelf: 'center'
   },
-  center: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
   },
   logincontainer: {
     alignItems: 'center',
@@ -204,21 +210,32 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   btn1: {
-    padding: 18,
-    backgroundColor: '#ffffff',
+    width: '80%',
+    padding: 15,
+    backgroundColor: 'grey',
     borderRadius: 50,
-    elevation: 9,
-    marginHorizontal: 70,
-    marginVertical: 40,
+    elevation: 3,
+    marginTop: 35,
+    marginBottom: 15,
     alignItems: 'center',
+    alignSelf: 'center',
   },
   btn2: {
+    width: '80%',
     padding: 18,
-    backgroundColor: '#1BB4D3',
+    backgroundColor: '#09CE61',
     borderRadius: 50,
     elevation: 9,
     marginHorizontal: 70,
-    marginVertical: 40,
+    marginTop: 35,
+    marginBottom: 15,
     alignItems: 'center',
+    alignSelf: 'center'
+  },
+  logoContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 80,
+    marginBottom: 50
   },
 });
