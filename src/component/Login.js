@@ -40,13 +40,13 @@ class Login extends Component {
       },
     })
       .then(response => {
-        console.log(response);
+        //console.log(response);
         AsyncStorage.setItem('Token', response.data.token);
         this.props.navigation.navigate('ForYou');
       })
       .catch(error => {
         alert(error);
-        console.log(error);
+        //console.log(error);
       });
   };
 
@@ -87,7 +87,7 @@ class Login extends Component {
 
   render() {
     const disableLogin = this.state.validatedemail && this.state.validatedpass;
-    //console.log(this.props.navigation)
+    ////console.log(this.props.navigation)
 
     return (
       <View style={styles.center}>

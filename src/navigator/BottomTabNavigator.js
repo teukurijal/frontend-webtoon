@@ -1,7 +1,9 @@
 import React from 'react';
+import { Text } from 'react-native';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon5 from 'react-native-vector-icons/FontAwesome5';
 
 import Foryouscreen from '../component/Foryouscreen';
 import FavoriteScreen from '../component/FavoriteScreen';
@@ -35,21 +37,48 @@ const BottomTabNavigator = createBottomTabNavigator(
       screen: Foryouscreen,
       navigationOptions: {
         header: null,
-        tabBarLabel: 'For You',
-        tabBarIcon: ({tintColor}) => <Icon name="th-large" size={26} />,
+        tabBarLabel: ({focused}) => {
+          return (
+            <Text
+              style={[focused ? {color: '#09CE61'} : {color: 'grey'}, { textAlign: 'center', fontSize: 10 }]}>
+              FOR YOU
+            </Text>
+          )
+        },
+        tabBarIcon: ({focused}) => {
+          return (
+            <Icon5
+              name="canadian-maple-leaf"
+              style={focused ? {color: '#09CE61'} : {color: 'grey'}}
+              size={23} />
+          )
+        }
       },
     },
     FavoriteScreen: {
       screen: FavoriteScreen,
       navigationOptions: {
         header: null,
-        tabBarLabel: 'Favorite',
-        tabBarIcon: ({tintColor}) => <Icon name="star" size={26} />,
+        tabBarLabel: ({focused}) => {
+          return (
+            <Text
+              style={[focused ? {color: '#09CE61'} : {color: 'grey'}, { textAlign: 'center', fontSize: 10 }]}>
+              FAVORITE
+            </Text>
+          )
+        },
+        tabBarIcon: ({focused}) => {
+          return (
+            <Icon
+              name="heart"
+              style={focused ? {color: '#09CE61'} : {color: 'grey'}}
+              size={20} />
+          )
+        }
       },
     },
     ProfileScreen: {
       screen: ProfileStack,
-
       navigationOptions: {
         headerTitle: 'Episode 1',
         headerRight: (
@@ -59,8 +88,22 @@ const BottomTabNavigator = createBottomTabNavigator(
             onPress={() => Share.shareSingle(shareOptions)}
           />
         ),
-        tabBarLabel: 'Profile',
-        tabBarIcon: ({tintColor}) => <Icon name="user" size={26} />,
+        tabBarLabel: ({focused}) => {
+          return (
+            <Text
+              style={[focused ? {color: '#09CE61'} : {color: 'grey'}, { textAlign: 'center', fontSize: 10 }]}>
+              PROFILE
+            </Text>
+          )
+        },
+        tabBarIcon: ({focused}) => {
+          return (
+            <Icon
+              name="user"
+              style={focused ? {color: '#09CE61'} : {color: 'grey'}}
+              size={20} />
+          )
+        },
       },
     },
   },

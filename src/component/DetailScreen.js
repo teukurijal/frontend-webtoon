@@ -47,7 +47,7 @@ class DetailScreen extends Component {
       )}/episodes`,
     }).then(result => {
       this.setState({episodes: result.data});
-      console.log(episodes);
+      //console.log(episodes);
     });
   };
 
@@ -63,7 +63,7 @@ class DetailScreen extends Component {
   }
 
   render() {
-    console.log(this.props.navigation);
+    //console.log(this.props.navigation);
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1}}>
@@ -164,8 +164,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   image: {
-    width: 300,
+    width: 400,
     height: 200,
+    
     // resizeMode: 'stretch'
   },
 });

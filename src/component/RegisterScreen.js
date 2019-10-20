@@ -37,12 +37,12 @@ class RegisterScreen extends Component {
       },
     })
       .then(response => {
-        console.log(response);
+        //console.log(response);
         this.props.navigation.navigate('Logout');
       })
       .catch(error => {
         alert('Email already registered');
-        console.log(error);
+        //console.log(error);
       });
   };
 
@@ -83,7 +83,7 @@ class RegisterScreen extends Component {
 
   render() {
     const disableLogin = this.state.validatedemail && this.state.validatedpass;
-    //console.log(this.props.navigation)
+    ////console.log(this.props.navigation)
 
     return (
       <View style={styles.center}>

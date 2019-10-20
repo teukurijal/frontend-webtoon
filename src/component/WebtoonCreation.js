@@ -60,7 +60,7 @@ class ForyouScreen extends Component {
   }
 
   render() {
-    console.log(this.props.navigation);
+    //console.log(this.props.navigation);
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1}}>

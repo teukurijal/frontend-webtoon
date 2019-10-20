@@ -13,7 +13,7 @@ export default class ProfileScreen extends Component {
   }
 
   render() {
-    console.log(this.props.navigation);
+    //console.log(this.props.navigation);
     return (
       <View style={styles.center}>
         <View style={styles.textcontainer}>

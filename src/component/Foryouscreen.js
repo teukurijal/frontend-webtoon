@@ -72,7 +72,7 @@ class ForyouScreen extends Component {
       url: `/webtoons?is_favorite=true`,
     }).then(result => {
       this.setState({favorites: result.data});
-      console.log(this.state.favorites);
+      //console.log(this.state.favorites);
     });
   };
 
@@ -163,10 +163,11 @@ class ForyouScreen extends Component {
                   </TouchableOpacity>
                 </View>
                 <Carousel
-                  autoplay
-                  autoplayTimeout={3000}
                   loop
+                  autoplay
                   index={0}
+                  activePageIndicatorStyle={{color: '#09CE61'}}
+                  autoplayTimeout={3000}
                   pageSize={350}>
                   {banners.map((image, index) => this.renderPage(image, index))}
                 </Carousel>
@@ -211,7 +212,7 @@ class ForyouScreen extends Component {
                           style={{
                             backgroundColor: 'white',
                             borderRadius: 5,
-                            borderWidth: 0.5,
+                            borderWidth: 0.4,
                             overflow: 'hidden',
                           }}>
                           <Image
@@ -275,55 +276,62 @@ class ForyouScreen extends Component {
                             title: item.title,
                             toonid: item.id,
                           })
-                        }>
+                        }
+                      >
                         <View
                           style={{
                             backgroundColor: 'white',
-                            marginVertical: 4,
                             flex: 1,
+                            marginBottom:10,
                             flexDirection: 'row',
                             borderRadius: 1,
+
                           }}>
                           <View
                             style={{
-                              borderWidth: 0.5,
+                              borderWidth: 0.4,
                               borderRadius: 5,
+                              overflow:'hidden'
                             }}>
                             <Image
                               source={{uri: item.image}}
                               style={{
                                 width: 90,
                                 height: 90,
-                                marginLeft: 1,
-                                borderRadius: 20,
                               }}
                             />
                           </View>
                           <View
                             style={{
-                              flexDirection: 'column',
-                              alignItems: 'flex-start',
-                              justifyContent: 'center',
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              marginHorizontal: 20,
                             }}>
-                            <View
-                              style={{
-                                marginHorizontal: 15,
-                              }}>
-                              <Text
+                              <View
                                 style={{
-                                  fontSize: 17,
-                                  marginBottom: 5,
                                 }}>
-                                {item.title}
-                              </Text>
-                            </View>
+                                <Text
+                                  style={{
+                                    fontSize: 17,
+                                    fontWeight: 'bold',
+                                    color: 'black'
+                                  }}>
+                                  {item.title}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 10,
+                                    color: 'grey',
+                                  }}>
+                                  {item.genre}
+                                </Text>
+                              </View>
                             <View>
                               <TouchableOpacity
                                 onPress={() => alert('ad to favorite')}>
-                                <View style={styles.btnblue}>
-                                  <Icon name="plus" size={12} />
-                                  <Text> Favorite</Text>
-                                </View>
+                                  <Icon style={item.isFavorite ? {color: '#09CE61'} : {color: 'grey'}}  name="heart" size={25} />
                               </TouchableOpacity>
                             </View>
                           </View>
@@ -350,11 +358,10 @@ const styles = StyleSheet.create({
     height: 240,
   },
   btnblue: {
-    padding: 8,
+    padding: 5,
     backgroundColor: '#1BB4D3',
     borderRadius: 10,
     elevation: 3,
-    marginLeft: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },

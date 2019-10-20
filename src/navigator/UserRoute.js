@@ -33,7 +33,6 @@ const UserRoute = createStackNavigator({
     navigationOptions: ({navigation}) => {
       const {navigate, getParam} = navigation;
       const title = getParam('title');
-
       return {
         headerTitle: title,
         headerTitleStyle: {

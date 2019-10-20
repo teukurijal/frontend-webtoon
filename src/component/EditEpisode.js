@@ -74,7 +74,7 @@ class EditEpisode extends Component {
   }
 
   render() {
-    console.log(this.props.navigation);
+    //console.log(this.props.navigation);
     return (
       <View style={{flex: 1}}>
         <View style={{marginTop: 15, marginLeft: 15}}>

@@ -4,7 +4,7 @@ import axiosInstance from '../service/baseUrl';
 import {AsyncStorage} from 'react-native';
 
 function Story({image}) {
-  console.log(image);
+  //console.log(image);
   return <Image source={{uri: image}} style={{width: '100%', height: 500}} />;
 }
 
@@ -23,7 +23,7 @@ class DetailEpisode extends Component {
     });
 
     this.onPage();
-    console.log(this.props.navigation.getParam('toonid'));
+    //console.log(this.props.navigation.getParam('toonid'));
   };
 
   onPage = async () => {
@@ -38,13 +38,13 @@ class DetailEpisode extends Component {
       )}/episode/${this.props.navigation.getParam('episodeid')}/images`,
     }).then(result => {
       this.setState({pages: result.data});
-      console.log('toon ' + this.props.navigation.getParam('toonid'));
-      console.log('episode ' + this.props.navigation.getParam('episodeid'));
+      //console.log('toon ' + this.props.navigation.getParam('toonid'));
+      //console.log('episode ' + this.props.navigation.getParam('episodeid'));
     });
   };
 
   Story(image) {
-    console.log(image);
+    //console.log(image);
     return <Image source={{uri: image}} style={{width: '100%', height: 500}} />;
   }
 
