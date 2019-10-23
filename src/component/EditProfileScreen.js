@@ -20,85 +20,67 @@ const options = {
 };
 
 export default class EditProfileScreen extends Component {
-  static navigationOptions = ({navigation, screenProps}) => ({
-    headerTitle: 'Edit Proe',
-    headerLeft: null,
-    headerRight: (
-      <Icon
-        name="check"
-        style={{marginRight: 20, fontSize: 25}}
-        onPress={() => this.handleUpload()}
-      />
-    ), // () => navigation.navigate('ProfileScreen')
-  });
+  
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      photo: '',
-      inputName: '',
-      isChangingPhoto: false,
+      this.state = {
+        photo:'',
     };
   }
 
-  handleUpload() {
-    axiosInstance({
-      method: 'POST',
-      url: `/user/${1}/upload`,
-      //body:
-    }).then(result => {
-      this.setState({toons: result.data});
+  createFormData = (photo, body) => {
+    const data = new FormData();
+  
+    data.append('profile', {
+      name: photo.fileName,
+      type: photo.type,
+      uri:
+        Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
     });
-  }
-  componentDidMount() {
-    if (this.state.isChangingPhoto) {
-      var newphoto = this.state.photo;
-      newphoto.image = this.state.avatarSource.uri;
-      newphoto.name = this.state.inputName;
-      this.setState({
-        photo: newphoto,
-        isChangingPhoto: false,
+  
+    Object.keys(body).forEach(key => {
+      data.append(key, body[key]);
+    });
+  
+    return data;
+  };
+  
+  handleUploadPhoto = () => {
+    fetch("http://192.168.1.28:3000/api/v1/user/1/upload", {
+    method: "PUT",
+    body: this.createFormData(this.state.photo, { userId: "123" })
+  })
+      .then(response => console.log(response))
+      .then(response => {
+        console.log("upload succes", response);
+        this.props.navigation.navigate('ProfileScreen',{photo: this.state.photo})
+        //alert("Upload success!");
+        //this.setState({ photo: null });
+      })
+      .catch(error => {
+        console.log("upload error", error);
+        alert("Upload failed!");
       });
-    }
+  };
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      headerRight:(<Icon
+        name="check"
+        style={{marginRight: 20, fontSize: 25}}
+        onPress={this.handleUploadPhoto}
+      />)
+    });
   }
 
-  // componentDidUpdate (){
-  //     if(this.state.isChangingPhoto){
-
-  //         var newphoto = this.state.photo
-  //         newphoto.image = this.state.avatarSource.uri
-  //         newphoto.name = this.state.inputName
-  //         this.setState({
-  //             photo: newphoto,
-  //             isChangingPhoto:false
-  //         });
-  //     }
-  //   }
-
-  handleProfile() {
-    ImagePicker.showImagePicker(options, response => {
-      //console.log('Response = ', response);
-
-      if (response.didCancel) {
-        //console.log('User cancelled image picker');
-      } else if (response.error) {
-        //console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        //console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.uri};
-
-        //console.log(source);
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-        this.setState({
-          photo: source,
-          isChangingPhoto: true,
-        });
+  handleChoosePhoto () {
+    ImagePicker.launchImageLibrary(options, response => {
+      if (response.uri) {
+        this.setState({ photo: response })
       }
-    });
+    })
   }
 
   handleInputName(text) {
@@ -107,8 +89,15 @@ export default class EditProfileScreen extends Component {
     });
   }
 
+  static navigationOptions = ({navigation, screenProps}) => ({
+    headerTitle: 'Edit Profile',
+    headerLeft: null,
+    headerRight: 
+    navigation.state.params && navigation.state.params.headerRight
+  });
+
   render() {
-    const {photo} = this.state;
+    const { photo } = this.state;
     return (
       <View style={styles.center}>
         <View style={styles.textcontainer}>
@@ -121,7 +110,7 @@ export default class EditProfileScreen extends Component {
               borderWidth: 3,
               borderColor: 'black',
             }}
-            source={{uri: photo.uri}}
+            source={{ uri: photo.uri }}
           />
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -130,7 +119,7 @@ export default class EditProfileScreen extends Component {
               name="camera"
               size={25}
               color="#000000"
-              onPress={this.handleProfile.bind(this)}
+              onPress={this.handleChoosePhoto.bind(this)}
             />
           </TouchableOpacity>
         </View>

@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
 import axiosInstance from '../service/baseUrl';
 
 const BannerWidth = Dimensions.get('window').width;

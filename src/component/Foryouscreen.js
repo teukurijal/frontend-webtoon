@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+  import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import Carousel from 'react-native-banner-carousel';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axiosInstance from '../service/baseUrl';
 import {AsyncStorage} from 'react-native';
+import { connect } from 'react-redux';
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
@@ -42,6 +43,7 @@ class ForyouScreen extends Component {
   }
 
   componentDidMount = async () => {
+    console.log(this.props.webtoons);
     this.setState({
       token: await AsyncStorage.getItem('Token'),
     });
@@ -104,6 +106,24 @@ class ForyouScreen extends Component {
 
   handleSeacrh(text) {
     this.setState({searchtext: text});
+  }
+
+  handleFavorite (item, favorite) {
+    const is_favorite = favorite
+    axiosInstance({
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${this.state.token}`,
+      },
+      url: `/user/1/webtoon/${item}`,
+      data: {
+          isFavorite: !is_favorite
+      }
+    }).then(result => {
+      //this.setState({banners: result.data});
+    });
+    this.componentDidMount()
   }
 
   renderPage(image, index) {
@@ -327,7 +347,7 @@ class ForyouScreen extends Component {
                               </View>
                             <View>
                               <TouchableOpacity
-                                onPress={() => alert('ad to favorite')}>
+                                onPress={() => this.handleFavorite(item.id, item.isFavorite)}>
                                   <Icon style={item.isFavorite ? {color: '#09CE61'} : {color: 'grey'}}  name="heart" size={25} />
                               </TouchableOpacity>
                             </View>
@@ -347,7 +367,13 @@ class ForyouScreen extends Component {
   }
 }
 
-export default ForyouScreen;
+const mapStateToProps = (state) => (
+  {
+    webtoons: state.toons
+  }
+)
+
+export default connect (mapStateToProps)(ForyouScreen);
 
 const styles = StyleSheet.create({
   container: {

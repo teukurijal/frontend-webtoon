@@ -10,9 +10,12 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  RefreshControl
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axiosInstance from '../service/baseUrl'
+import { SwipeListView } from 'react-native-swipe-list-view'
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
@@ -23,11 +26,12 @@ class FavoriteScreen extends Component {
 
     this.state = {
       data: '',
+      isRefreshing: false,
     };
   }
 
   componentDidMount() {
-    return fetch('http://192.168.100.5:3000/api/v1/webtoons?is_favorite=true')
+    return fetch('http://192.168.1.28:3000/api/v1/webtoons?is_favorite=true')
       .then(response => response.json())
       .then(responseJson => {
         this.setState(
@@ -40,6 +44,29 @@ class FavoriteScreen extends Component {
       .catch(error => {
         console.error(error);
       });
+  }
+
+  request(searchtext) {
+    axiosInstance({
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+      },
+      url: `/webtoons?isFavorite=true&&title=${searchtext}`,
+    }).then(result => {
+      this.setState({data: result.data});
+      if (!searchtext) {
+        this.setState({data: ''});
+      }
+    });
+  }
+
+  refreshData() {
+    this.setState({isRefreshing: true});
+    this.componentDidMount();
+    setTimeout(() => {
+      this.setState({isRefreshing: false});
+    }, 1000);
   }
 
   renderPage(image, index) {
@@ -82,6 +109,7 @@ class FavoriteScreen extends Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="Search"
+                onChangeText={text => this.request(text)}
                 placeholderTextColor="grey"
                 style={{
                   flex: 1,
@@ -96,15 +124,23 @@ class FavoriteScreen extends Component {
               />
             </View>
           </View>
-          <ScrollView scrollEventThrottle={0}>
+          <ScrollView 
+          showsVerticalScrollIndicator={false}
+            scrollEventThrottle={0}
+            refreshControl = {
+              <RefreshControl
+                refreshing={this.state.isRefreshing}
+                onRefresh={() => this.refreshData()}
+            />
+          }>
             <View>
               <View style={{flex: 3}}>
                 <View>
                   <SafeAreaView>
-                    <FlatList
+                    <SwipeListView
+                      useFlatList={true}
                       data={this.state.data}
                       horizontal={false}
-                      showsHorizontalScrollIndicator={false}
                       renderItem={({item}) => (
                         <TouchableOpacity
                           onPress={() =>
@@ -167,8 +203,21 @@ class FavoriteScreen extends Component {
                           </View>
                         </TouchableOpacity>
                       )}
-                      keyExtractor={(item, index) => index.toString()}
-                    />
+                      renderHiddenItem={ (rowData, rowMap) => (
+                        <View >
+                          
+                        </View>
+                    )}
+                    disableRightSwipe={true}
+                    leftOpenValue={20}
+                    rightOpenValue={-70}
+                    onRowOpen={(rowKey, rowMap) => {
+                        setTimeout(() => {
+                            rowMap[rowKey].closeRow()
+                        }, 2000)
+                    }}
+                    previewRowKey={this.state.data}
+                />
                   </SafeAreaView>
                 </View>
               </View>

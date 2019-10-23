@@ -8,13 +8,21 @@ export default class ProfileScreen extends Component {
     super();
 
     this.state = {
-      image: {uri: 'https://i.ibb.co/rdjb1Yt/avatar.jpg'},
+      image: '',
       name: 'Teuku Rijal'
     };
   }
 
+  componentDidMount() {
+    const url= 'http://192.168.1.28:3000/profile-1.png';
+    this.setState({ 
+      image: url
+    })
+  }
+
   render() {
     //console.log(this.props.navigation);
+    const{ image } = this.state
     return (
       <View style={styles.center}>
         <View style={styles.profilecontainer}>
@@ -25,10 +33,10 @@ export default class ProfileScreen extends Component {
                 height: 100,
                 borderRadius: 200 / 2,
                 overflow: 'hidden',
-                borderWidth: 3,
+                borderWidth: 1,
                 borderColor: 'black',
               }}
-              source={this.state.image}
+              source={{uri: image}}
             />
           </View>
           <View>
@@ -43,7 +51,7 @@ export default class ProfileScreen extends Component {
             style={styles.menu}
           >
             <View style={styles.btncontainer}>
-                 <Icon name='user' color={'grey'} size={20} />
+                 <Icon name='user' color={'#09CE61'} size={20} />
             </View>
             <View style={styles.btncontainer}>
                   <Text style={{fontSize: 20}}>My Profile</Text>
@@ -54,7 +62,7 @@ export default class ProfileScreen extends Component {
             style={styles.menu}
           >
             <View style={styles.btncontainer}>
-                 <Icon name='pencil-square' color={'grey'} size={20} />
+                 <Icon name='pencil-square' color={'#09CE61'} size={20} />
             </View>
             <View style={styles.btncontainer}>
                   <Text style={{fontSize: 20}}>My Webtoon Creation</Text>
@@ -65,7 +73,7 @@ export default class ProfileScreen extends Component {
             style={styles.menu}
           >
             <View style={styles.btncontainer}>
-                 <Icon name='sign-out' color={'grey'} size={20} />
+                 <Icon name='sign-out' color={'#09CE61'} size={20} />
             </View>
             <View 
               style={styles.btncontainer}>

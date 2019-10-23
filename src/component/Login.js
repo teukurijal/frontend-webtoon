@@ -51,7 +51,7 @@ class Login extends Component {
           //console.log(error);
         });
       } else {
-        this.refs.toast.show('sultan jelek');
+        this.refs.toast.show('Wrong Email or Password');
     }
   };
 

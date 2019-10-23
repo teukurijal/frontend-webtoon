@@ -10,11 +10,14 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  RefreshControl
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axiosInstance from '../service/baseUrl';
 import {AsyncStorage} from 'react-native';
+//import AddModal from './AddModal';
+import Modal from 'react-native-modalbox';
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
@@ -24,7 +27,11 @@ class WebtoonCreation extends Component {
     super();
     this.state = {
       webtoons: '',
-      token:''
+      token:'',
+      idtoon:'',
+      titletooon:'',
+      genretoon:'',
+      isRefreshing: false,
     };
   }
 
@@ -32,9 +39,20 @@ class WebtoonCreation extends Component {
     this.setState({
       token: await AsyncStorage.getItem('Token'),
     });
-
-    this.onWebtoon();
+    this.requestData();
+    
+    this.props.navigation.setParams({
+      headerRight:(<Icon
+        name="plus-circle"
+        style={{marginRight: 20, fontSize: 45, color:'#09CE61'}}
+        onPress={() => this.refs.addmodal.open()}
+      />)
+    });
   };
+
+  requestData() {
+    this.onWebtoon();
+  }
 
   onWebtoon = async () => {
     await axiosInstance({
@@ -49,23 +67,114 @@ class WebtoonCreation extends Component {
     });
   };
 
+  handleAddtoons = async () => {
+    this.refs.addmodal.close();
+    await axiosInstance({
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${this.state.token}`,
+      },
+      url: `/user/${1}/webtoon`,
+      data: {
+        title: this.state.titletooon,
+        genre: this.state.genretoon
+      }
+    }).then( response => {
+      this.setState({
+        titletooon:'',
+        genretoon:''
+      })
+    })
+    this.refreshData()
+  }
+
+  handleDetele = async (item) => {
+    await axiosInstance({
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${this.state.token}`,
+      },
+      url: `/user/${1}/webtoon/${item}`,
+    })
+    this.refreshData()
+  }
+
+  handleOpen(item) {
+    console.log(item)
+    this.refs.editmodal.open();
+    this.setState({
+      id: item
+    })
+  }
+
+  handleEdit = async () => {
+    //console.log('test);
+    //this.refs.editmodal.open();
+    await axiosInstance({
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${this.state.token}`,
+      },
+      url: `/user/${1}/webtoon/${this.state.id}`,
+      data: {
+        //id: this.state.id,
+        title: this.state.titletooon,
+        genre: this.state.genretoon
+      }
+    }).then( response => {
+      this.setState({
+        titletooon:'',
+        genretoon:''
+      })
+    })
+    this.refs.editmodal.close();
+    this.refreshData();
+  }
+  
+
+  refreshData() {
+    this.setState({isRefreshing: true});
+    this.requestData();
+    setTimeout(() => {
+      this.setState({isRefreshing: false});
+    }, 1000);
+  }
+
   renderPage(image, index) {
     return (
       <View key={index}>
         <Image
+          alt="No Image"
           style={{width: BannerWidth, height: BannerHeight}}
           source={{uri: image}}
         />
       </View>
     );
   }
+  static navigationOptions = ({navigation, screenProps}) => ({
+    headerTitle: 'My Webtoon',
+    headerLeft: null,
+    headerRight: 
+    navigation.state.params && navigation.state.params.headerRight
+  });
 
   render() {
     //console.log(this.props.navigation);
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1}}>
-          <ScrollView scrollEventThrottle={0}>
+          <ScrollView 
+            scrollEventThrottle={0}
+            refreshControl = {
+              <RefreshControl
+                refreshing={this.state.isRefreshing}
+                onRefresh={() => this.refreshData()}
+            />
+          }
+          >
             <View>
               <View style={{flex: 3}}>
                 <View 
@@ -81,7 +190,7 @@ class WebtoonCreation extends Component {
                       renderItem={({item}) => (
                         <TouchableOpacity
                           onPress={() =>
-                            this.props.navigation.navigate('DetailScreen', {
+                              this.props.navigation.navigate('EditEpisodeScreen', {
                               image: item.image,
                               title: item.title,
                               toonid: item.id,
@@ -142,19 +251,24 @@ class WebtoonCreation extends Component {
                                   flexDirection:'row',
                                 }}>
                                 <TouchableOpacity
-                                onPress={() => alert('ad to favorite')}
-                                style={{
-                                  borderRadius:5,
-                                  elevation:3,
-                                  padding:8,
-                                  backgroundColor: '#09CE61',
-                                  marginRight:10
-                                }}
+                                  onPress={() => this.handleDetele(item.id)}
+                                  style={{
+                                    borderRadius:5,
+                                    elevation:3,
+                                    padding:8,
+                                    backgroundColor: '#09CE61',
+                                    marginRight:10
+                                  }}
                                 >
                                 <Icon style={{color: '#ffffff'}}  name="trash" size={15} />
                               </TouchableOpacity>
                               <TouchableOpacity
-                                onPress={() => alert('ad to favorite')}
+                                onPress={() => 
+                                  this.handleOpen(item.id)
+                                  //this.handleEdit(item.id)
+                                  //this.props.navigation.setParams({id: item.id})
+                                }
+                                //onPress={() => this.handleEdit(item.id)}
                                 style={{
                                   flexDirection:'row', 
                                   borderRadius:5,
@@ -165,7 +279,12 @@ class WebtoonCreation extends Component {
                                   marginLeft:10
                                 }}
                               >
-                                  <Icon style={{color: '#ffffff'}}  name="edit" size={15} />
+                                  <Icon 
+                                    style={{
+                                      color: '#ffffff'
+                                    }}  
+                                    name="edit" 
+                                    size={15} />
                                   <Text style={{fontWeight:'bold', color:'#ffffff'}}> Edit</Text>
                               </TouchableOpacity>
                             </View>
@@ -181,7 +300,7 @@ class WebtoonCreation extends Component {
             </View>
           </ScrollView>
         </View>
-        <View
+        {/* <View
           style={{
             backgroundColor: 'none',
             position: 'absolute',
@@ -195,10 +314,98 @@ class WebtoonCreation extends Component {
           <Icon
             name="plus-circle"
             size={70}
-            color="#09CE61"
-            onPress={() => this.props.navigation.navigate('CreateWebtoon')}
+            color="grey"
+            onPress={() => this.refs.addmodal.open()}
           />
-        </View>
+        </View> */}
+        <Modal
+          ref={'addmodal'}
+          style={[styles.modal, styles.modal4]}
+          position={'center'}>
+          <View>
+            <Text style={styles.text}>
+              Add Your Webtoon
+            </Text>
+            <TextInput
+              placeholder="Title"
+              style={styles.textinput}
+              onChangeText={(text) => this.setState({ titletooon: text})}
+            />
+            <TextInput
+              placeholder="Genre"
+              style={styles.textinput}
+              onChangeText={(text) => this.setState({genretoon: text})}
+            />
+            <View 
+              style={{
+                flexDirection:'row',
+                justifyContent:'center',
+                alignItems:'center',
+                marginTop:15
+              }}> 
+              <Image
+                style={styles.image}
+              />
+              <View 
+                style={{
+                  marginHorizontal: 10,
+                  justifyContent:'space-around',
+                }}  
+              >
+                <TouchableOpacity style={styles.btn}>
+                  <Text style={styles.textbtn}>Add Image</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={()=> this.handleAddtoons()}>
+                  <Text style={styles.textbtn}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          ref={'editmodal'}
+          style={[styles.modal, styles.modal4]}
+          position={'center'}>
+          <View>
+            <Text style={styles.text}>
+              Edit Webtoon
+            </Text>
+            <TextInput
+              placeholder="Title"
+              style={styles.textinput}
+              onChangeText={(text) => this.setState({ titletooon: text})}
+            />
+            <TextInput
+              placeholder="Genre"
+              style={styles.textinput}
+              onChangeText={(text) => this.setState({genretoon: text})}
+            />
+            <View 
+              style={{
+                flexDirection:'row',
+                justifyContent:'center',
+                alignItems:'center',
+                marginTop:15
+              }}> 
+              <Image
+                style={styles.image}
+              />
+              <View 
+                style={{
+                  marginHorizontal: 10,
+                  justifyContent:'space-around',
+                }}  
+              >
+                <TouchableOpacity style={styles.btn}>
+                  <Text style={styles.textbtn}>Add Image</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={() =>this.handleEdit()}>
+                  <Text style={styles.textbtn}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     );
   }
@@ -211,5 +418,47 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  modal4: {
+    height: 350,
+    borderRadius:30
+  },
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: 'black',
+    fontSize: 22,
+    textAlign: 'center',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    //borderRadius: 200 / 2,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius:10
+  },
+  textinput: {
+    height: 50, 
+    width: 200, 
+    backgroundColor: '#DDDDDD',
+    marginTop:16,
+    borderRadius:10
+  },
+  btn: {
+    backgroundColor:'#09CE61',
+    paddingHorizontal:5,
+    paddingVertical:5,
+    marginVertical:10,
+    borderRadius:10
+  },
+  textbtn: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });

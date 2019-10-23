@@ -5,6 +5,7 @@ import React from 'react';
 import BottomTabNavigator from './BottomTabNavigator';
 import DetailScreen from '../component/DetailScreen';
 import DetailEpisode from '../component/DetailEpisode';
+import EditEpisodeScreen from '../component/EditEpisodeScreen';
 import WebtoonCreation from '../component/WebtoonCreation';
 import CreateWebtoon from '../component/CreateWebtoon';
 import EditProfileScreen from '../component/EditProfileScreen';
@@ -13,6 +14,7 @@ import EditWebtoon from '../component/EditWebtoon';
 import EditEpisode from '../component/EditEpisode';
 import SearchScreen from '../component/SearchScreen';
 import Share from 'react-native-share';
+//import AddModal from '../component/AddModal';
 
 const shareOptions = {
   title: 'Share via',
@@ -72,21 +74,44 @@ const UserRoute = createStackNavigator({
       };
     },
   },
+  EditEpisodeScreen: {
+    screen: EditEpisodeScreen,
+    // navigationOptions: ({navigation}) => {
+    //   const {navigate, getParam} = navigation;
+    //   const title = getParam('title');
+
+    //   return {
+    //     headerTitle: title,
+    //     headerTitleStyle: {
+    //       fontSize: 18,
+    //       fontWeight: 'bold',
+    //     },
+    //     headerTitle: title,
+    //     headerRight: (
+    //       <Icon
+    //         name="plus"
+    //         style={{marginRight: 30, fontSize: 20}}
+    //         onPress={() => Share.shareSingle(shareOptions)}
+    //       />
+    //     ),
+    //   };
+    // },
+  },
   WebtoonCreation: {
     screen: WebtoonCreation,
-    navigationOptions: ({navigation}) => {
-      const {navigate, getParam} = navigation;
-      const title = getParam('title');
+    // navigationOptions: ({navigation}) => {
+    //   const {navigate, getParam} = navigation;
+    //   const title = getParam('title');
 
-      return {
-        headerTitle: 'tester',
-        headerTitleStyle: {
-          fontSize: 18,
-          fontWeight: 'bold',
-        },
-        headerTitle: 'My Webtoon',
-      };
-    },
+    //   return {
+    //     headerTitle: 'tester',
+    //     headerTitleStyle: {
+    //       fontSize: 18,
+    //       fontWeight: 'bold',
+    //     },
+    //     headerTitle: 'My Webtoon',
+    //   };
+    // },
   },
   CreateWebtoon: {
     screen: CreateWebtoon,
