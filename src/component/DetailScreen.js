@@ -11,8 +11,8 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import axiosInstance from '../service/baseUrl';
-import {AsyncStorage} from 'react-native';
+import * as actionEpisodes from '../_actions/actionEpisodes';
+import { connect } from 'react-redux';
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
@@ -22,33 +22,22 @@ class DetailScreen extends Component {
   constructor() {
     super();
     this.state = {
-      episodes: '',
+      // episodes: '',
       token: '',
+      user_id: '',
     };
   }
 
   componentDidMount = async () => {
-    this.setState({
-      token: await AsyncStorage.getItem('Token'),
-    });
-
     this.onEpisode();
   };
 
-  onEpisode = async () => {
-    await axiosInstance({
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
-      },
-      url: `/user/${1}/webtoon/${this.props.navigation.getParam(
-        'toonid',
-      )}/episodes`,
-    }).then(result => {
-      this.setState({episodes: result.data});
-      //console.log(episodes);
-    });
+
+  onEpisode = () => {
+    const toonid = this.props.navigation.getParam('toonid')
+    const { id, token } = this.props
+    this.props.getEpisodes(id, toonid, token);
+
   };
 
   renderPage(image, index) {
@@ -63,7 +52,7 @@ class DetailScreen extends Component {
   }
 
   render() {
-    //console.log(this.props.navigation);
+    const { episodes } = this.props
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1}}>
@@ -87,7 +76,7 @@ class DetailScreen extends Component {
                 <View>
                   <SafeAreaView>
                     <FlatList
-                      data={this.state.episodes}
+                      data={ episodes }
                       horizontal={false}
                       showsHorizontalScrollIndicator={false}
                       renderItem={({item}) => (
@@ -155,7 +144,22 @@ class DetailScreen extends Component {
   }
 }
 
-export default DetailScreen;
+const mapStateToProps = state => ({
+  episodes: state.episodes.data,
+  token: state.users.data.token,
+  id: state.users.data.id
+})
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getEpisodes: (user_id, toonid, token) => dispatch(actionEpisodes.getEpisodes(user_id, toonid, token))
+  }
+}
+
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+  )(DetailScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -164,6 +168,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btn: {
+    
     padding: 10,
     backgroundColor: '#FFC300',
     borderRadius: 10,

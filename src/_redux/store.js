@@ -1,17 +1,9 @@
-import { createStore, applyMiddleware } from 'redux';
-import { logger, thunk, promise } from './middleware';
-import webtoonsReducer from '../_reducers/toons';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import middleware from './middleware';
+
+import appReducer from '../_reducers'
+const store = createStore(appReducer, {}, applyMiddleware(...middleware));
 
 
-const middleware = applyMiddleware(logger, thunk, promise);
 
-// const reducer = combineReducers({
-//   webtoonsReducer,
-// })
-
-const store = createStore(
-  webtoonsReducer,
-  middleware
-);
-
-export default store
+export { store }

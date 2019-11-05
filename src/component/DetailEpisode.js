@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {FlatList, Image, ActivityIndicator} from 'react-native';
 import axiosInstance from '../service/baseUrl';
-import {AsyncStorage} from 'react-native';
+import { connect } from 'react-redux';
 
 function Story({image}) {
   //console.log(image);
@@ -18,22 +18,18 @@ class DetailEpisode extends Component {
   }
 
   componentDidMount = async () => {
-    this.setState({
-      token: await AsyncStorage.getItem('Token'),
-    });
-
     this.onPage();
-    //console.log(this.props.navigation.getParam('toonid'));
   };
 
   onPage = async () => {
+    const {id, token} = this.props
     await axiosInstance({
       method: 'GET',
       headers: {
         'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
+        Authorization: `Bearer ${token}`,
       },
-      url: `/user/${1}/webtoon/${this.props.navigation.getParam(
+      url: `/user/${id}/webtoon/${this.props.navigation.getParam(
         'toonid',
       )}/episode/${this.props.navigation.getParam('episodeid')}/images`,
     }).then(result => {
@@ -64,4 +60,11 @@ class DetailEpisode extends Component {
   }
 }
 
-export default DetailEpisode;
+const mapStateToProps = state => ({
+  token: state.users.data.token,
+  id: state.users.data.id
+})
+export default connect(
+  mapStateToProps, 
+  // mapDispatchToProps
+  )(DetailEpisode);

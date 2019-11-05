@@ -17,6 +17,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import axiosInstance from '../service/baseUrl';
 import {AsyncStorage} from 'react-native';
 import { connect } from 'react-redux';
+import * as actionWebtoons from '../_actions/actionWebtoons';
+import * as actionFavorites from '../_actions/actionFavorites'
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
@@ -30,8 +32,6 @@ class ForyouScreen extends Component {
   constructor() {
     super();
     this.state = {
-      data: '',
-      favorites: '',
       banners: '',
       token: '',
       position: 1,
@@ -43,60 +43,30 @@ class ForyouScreen extends Component {
   }
 
   componentDidMount = async () => {
-    console.log(this.props.webtoons);
-    this.setState({
-      token: await AsyncStorage.getItem('Token'),
-    });
-    this.requestData();
+    this.requestData()
   };
 
   requestData() {
-    this.onFavorite();
-    this.onToons();
+    this.props.getWebtoons();
+    this.props.getFavorites();
     this.onBanners();
-  }
+  };
 
   refreshData() {
-    this.setState({isRefreshing: true});
-    this.requestData();
+    this.setState({isRefreshing: true})
+    this.requestData()
     setTimeout(() => {
-      this.setState({isRefreshing: false});
-    }, 1000);
-  }
-
-  onFavorite = async () => {
-    await axiosInstance({
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
-      },
-      url: `/webtoons?is_favorite=true`,
-    }).then(result => {
-      this.setState({favorites: result.data});
-      //console.log(this.state.favorites);
-    });
+      this.setState({isRefreshing: false})
+    }, 1000)
   };
 
-  onToons = async () => {
-    await axiosInstance({
+  
+  onBanners() {
+    axiosInstance({
       method: 'GET',
       headers: {
         'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
-      },
-      url: `/webtoons`,
-    }).then(result => {
-      this.setState({toons: result.data});
-    });
-  };
-
-  onBanners = async () => {
-    await axiosInstance({
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
+        Authorization: `Bearer ${this.props.token}`,
       },
       url: `/banners`,
     }).then(result => {
@@ -114,16 +84,18 @@ class ForyouScreen extends Component {
       method: 'PUT',
       headers: {
         'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
+        Authorization: `Bearer ${this.props.token}`,
       },
       url: `/user/1/webtoon/${item}`,
       data: {
-          isFavorite: !is_favorite
+        isFavorite: !is_favorite
       }
     }).then(result => {
-      //this.setState({banners: result.data});
-    });
-    this.componentDidMount()
+      
+    }).catch(err => {
+      alert(err)
+    })
+    this.requestData()
   }
 
   renderPage(image, index) {
@@ -138,6 +110,7 @@ class ForyouScreen extends Component {
   }
 
   render() {
+    const {webtoons, favorites} = this.props
     return (
       <SafeAreaView
         style={{
@@ -214,7 +187,7 @@ class ForyouScreen extends Component {
               <View>
                 <SafeAreaView>
                   <FlatList
-                    data={this.state.favorites}
+                    data={favorites}
                     horizontal={true}
                     style={{overflow: 'visible'}}
                     showsHorizontalScrollIndicator={false}
@@ -286,7 +259,7 @@ class ForyouScreen extends Component {
               <View>
                 <SafeAreaView>
                   <FlatList
-                    data={this.state.toons}
+                    data={webtoons}
                     horizontal={false}
                     showsHorizontalScrollIndicator={false}
                     renderItem={({item}) => (
@@ -347,7 +320,8 @@ class ForyouScreen extends Component {
                               </View>
                             <View>
                               <TouchableOpacity
-                                onPress={() => this.handleFavorite(item.id, item.isFavorite)}>
+                                onPress={() => this.handleFavorite(item.id, item.isFavorite)}
+                              >
                                   <Icon style={item.isFavorite ? {color: '#09CE61'} : {color: 'grey'}}  name="heart" size={25} />
                               </TouchableOpacity>
                             </View>
@@ -367,13 +341,25 @@ class ForyouScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => (
-  {
-    webtoons: state.toons
-  }
-)
+const mapStateToProps = state => ({
+    webtoons: state.webtoons.data,
+    favorites: state.favorites.data,
+    token: state.users.data.token,
+    id: state.users.data.id
+  })
 
-export default connect (mapStateToProps)(ForyouScreen);
+  const mapDispatchToProps = dispatch => {
+    return {
+      getWebtoons: () => dispatch(actionWebtoons.getWebtoons()),
+      getFavorites: () => dispatch(actionFavorites.getFavorites())
+    }
+  }
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+  )(ForyouScreen);
 
 const styles = StyleSheet.create({
   container: {

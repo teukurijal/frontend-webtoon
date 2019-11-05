@@ -1,15 +1,11 @@
-import logger from 'redux-logger';
-import { createPromise } from 'redux-promise-middleware';
-import thunk from 'redux-thunk';
+  
+import { createLogger } from 'redux-logger';
+import promise from 'redux-promise-middleware';
 
-const promise = createPromise ({
-    type: {
-        fullfilled:'succsess'
-    }
-})
+const middlewares = [];
 
-export {
-    logger,
-    promise,
-    thunk
-}
+middlewares.push(createLogger());
+// middlewares.push(reactNavigation)
+middlewares.push(promise);
+
+export default middlewares;

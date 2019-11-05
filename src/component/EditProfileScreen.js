@@ -6,10 +6,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  AsyncStorage,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ImagePicker from 'react-native-image-picker';
+import { connect } from 'react-redux';
 
 const options = {
   title: 'Select Photo',
@@ -19,7 +21,7 @@ const options = {
   },
 };
 
-export default class EditProfileScreen extends Component {
+class EditProfileScreen extends Component {
   
 
   constructor(props) {
@@ -27,8 +29,11 @@ export default class EditProfileScreen extends Component {
 
       this.state = {
         photo:'',
+        user_id:'',
+        token:''
     };
   }
+  
 
   createFormData = (photo, body) => {
     const data = new FormData();
@@ -48,7 +53,7 @@ export default class EditProfileScreen extends Component {
   };
   
   handleUploadPhoto = () => {
-    fetch("http://192.168.1.28:3000/api/v1/user/1/upload", {
+    fetch(`http://192.168.1.28:3000/api/v1/user/1/upload`, {
     method: "PUT",
     body: this.createFormData(this.state.photo, { userId: "123" })
   })
@@ -65,14 +70,32 @@ export default class EditProfileScreen extends Component {
       });
   };
 
-  componentDidMount() {
+  componentDidMount = async () => {
+    // alert(this.props.name)
     this.props.navigation.setParams({
       headerRight:(<Icon
         name="check"
         style={{marginRight: 20, fontSize: 25}}
         onPress={this.handleUploadPhoto}
       />)
+    })
+    this.setState({
+      id: await AsyncStorage.getItem('Userid'),
     });
+    // alert(this.state.id)
+  }
+
+  handleDataUser = async () => {
+    try {
+      const datauser = await AsyncStorage.getItem('Datauser');
+      const user = JSON.parse(datauser);
+      this.setState({
+        user_id : user.id,
+        token: user.token
+      })
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   handleChoosePhoto () {
@@ -125,15 +148,33 @@ export default class EditProfileScreen extends Component {
         </View>
         <View style={styles.passwordcontainer}>
           <TextInput
-            style={{padding: 0, fontSize: 30, textAlign: 'center'}}
+            style={{ fontSize: 30, textAlign: 'center'}}
             onChangeText={this.handleInputName.bind(this)}
-            value={this.state.inputName}
+            editable={true}
+            defaultValue={this.props.name}
+          />
+        </View>
+        <View style={styles.passwordcontainer}>
+          <TextInput
+            style={{ fontSize: 18, textAlign: 'center'}}
+            // onChangeText={this.handleInputName.bind(this)}
+            editable={true}
+            defaultValue={this.props.email}
           />
         </View>
       </View>
     );
   }
 }
+
+const MapStateToProps = state => ({
+  name: state.users.data.name,
+  email: state.users.data.email
+})
+
+export default connect(
+MapStateToProps
+)(EditProfileScreen)
 
 const styles = StyleSheet.create({
   emailcontainer: {
@@ -148,13 +189,10 @@ const styles = StyleSheet.create({
   },
   passwordcontainer: {
     backgroundColor: '#ffffff',
-    padding: 5,
-    marginTop: 10,
-    marginHorizontal: 5,
-    elevation: 3,
-    borderRadius: 10,
+    borderBottomWidth:0.5,
+    marginHorizontal:40,
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     justifyContent: 'center',
   },
   center: {

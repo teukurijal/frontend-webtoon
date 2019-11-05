@@ -15,9 +15,18 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axiosInstance from '../service/baseUrl';
-import {AsyncStorage} from 'react-native';
-//import AddModal from './AddModal';
+import ImagePicker from 'react-native-image-picker';
 import Modal from 'react-native-modalbox';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { connect } from 'react-redux';
+
+const options = {
+  title: 'Select Photo',
+  storageOptions: {
+    skipBackup: true,
+    path: 'images',
+  },
+};
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
@@ -26,25 +35,25 @@ class WebtoonCreation extends Component {
   constructor() {
     super();
     this.state = {
+      photo:'',
       webtoons: '',
       token:'',
       idtoon:'',
       titletooon:'',
       genretoon:'',
       isRefreshing: false,
+      defaulttitle:'',
+      defaultgenre:'',
     };
   }
 
   componentDidMount = async () => {
-    this.setState({
-      token: await AsyncStorage.getItem('Token'),
-    });
     this.requestData();
     
     this.props.navigation.setParams({
       headerRight:(<Icon
-        name="plus-circle"
-        style={{marginRight: 20, fontSize: 45, color:'#09CE61'}}
+        name="plus"
+        style={{marginRight: 20, fontSize: 25, color:'#09CE61'}}
         onPress={() => this.refs.addmodal.open()}
       />)
     });
@@ -55,30 +64,33 @@ class WebtoonCreation extends Component {
   }
 
   onWebtoon = async () => {
+    const {id, token } = this.props
     await axiosInstance({
       method: 'GET',
       headers: {
         'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
+        Authorization: `Bearer ${token}`,
       },
-      url: `/user/${1}/webtoons`,
+      url: `/user/${id}/webtoons`,
     }).then(result => {
       this.setState({webtoons: result.data});
     });
   };
 
   handleAddtoons = async () => {
+    const {id, token } = this.props
     this.refs.addmodal.close();
     await axiosInstance({
       method: 'POST',
       headers: {
         'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
+        Authorization: `Bearer ${token}`,
       },
-      url: `/user/${1}/webtoon`,
+      url: `/user/${id}/webtoon`,
       data: {
         title: this.state.titletooon,
-        genre: this.state.genretoon
+        genre: this.state.genretoon,
+        isFavorite: 0
       }
     }).then( response => {
       this.setState({
@@ -101,24 +113,25 @@ class WebtoonCreation extends Component {
     this.refreshData()
   }
 
-  handleOpen(item) {
-    console.log(item)
+  handleOpen(id, title, genre) {
+    // console.log(item)
     this.refs.editmodal.open();
     this.setState({
-      id: item
+      idtoon: id,
+      defaulttitle: title,
+      defaultgenre: genre
     })
   }
 
   handleEdit = async () => {
-    //console.log('test);
-    //this.refs.editmodal.open();
+    const {id, token} = this.props
     await axiosInstance({
       method: 'PUT',
       headers: {
         'content-type': 'application/json',
-        Authorization: `Bearer ${this.state.token}`,
+        Authorization: `Bearer ${token}`,
       },
-      url: `/user/${1}/webtoon/${this.state.id}`,
+      url: `/user/${id}/webtoon/${this.state.idtoon}`,
       data: {
         //id: this.state.id,
         title: this.state.titletooon,
@@ -143,6 +156,14 @@ class WebtoonCreation extends Component {
     }, 1000);
   }
 
+  handleChoosePhoto () {
+    ImagePicker.launchImageLibrary(options, response => {
+      if (response.uri) {
+        this.setState({ photo: response })
+      }
+    })
+  }
+
   renderPage(image, index) {
     return (
       <View key={index}>
@@ -154,6 +175,7 @@ class WebtoonCreation extends Component {
       </View>
     );
   }
+  
   static navigationOptions = ({navigation, screenProps}) => ({
     headerTitle: 'My Webtoon',
     headerLeft: null,
@@ -162,7 +184,6 @@ class WebtoonCreation extends Component {
   });
 
   render() {
-    //console.log(this.props.navigation);
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1}}>
@@ -183,12 +204,13 @@ class WebtoonCreation extends Component {
                     marginHorizontal:10
                   }}>
                   <SafeAreaView>
-                    <FlatList
+                    <SwipeListView
+                      useFlatList={true}
                       data={this.state.webtoons}
                       horizontal={false}
-                      showsHorizontalScrollIndicator={false}
                       renderItem={({item}) => (
                         <TouchableOpacity
+                          activeOpacity={.99}
                           onPress={() =>
                               this.props.navigation.navigate('EditEpisodeScreen', {
                               image: item.image,
@@ -226,10 +248,13 @@ class WebtoonCreation extends Component {
                               }}>
                               <View
                                 style={{
-                                  fontSize: 17,
-                                  fontWeight: 'bold',
-                                  color: 'black'
+                                  flex: 1,
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  marginHorizontal: 20,
                                 }}>
+                                <View>
                                 <Text
                                   style={{
                                     fontSize: 17,
@@ -245,54 +270,79 @@ class WebtoonCreation extends Component {
                                   }}>
                                   {item.genre}
                                 </Text>
-                              </View>
-                              <View 
-                                style={{
-                                  flexDirection:'row',
-                                }}>
-                                <TouchableOpacity
-                                  onPress={() => this.handleDetele(item.id)}
+                                </View>
+                                <View>
+                                <Text
                                   style={{
-                                    borderRadius:5,
-                                    elevation:3,
-                                    padding:8,
-                                    backgroundColor: '#09CE61',
-                                    marginRight:10
-                                  }}
-                                >
-                                <Icon style={{color: '#ffffff'}}  name="trash" size={15} />
-                              </TouchableOpacity>
-                              <TouchableOpacity
-                                onPress={() => 
-                                  this.handleOpen(item.id)
-                                  //this.handleEdit(item.id)
-                                  //this.props.navigation.setParams({id: item.id})
-                                }
-                                //onPress={() => this.handleEdit(item.id)}
-                                style={{
-                                  flexDirection:'row', 
-                                  borderRadius:5,
-                                  elevation:3,
-                                  paddingHorizontal:10,
-                                  alignItems:'center',
-                                  backgroundColor: '#09CE61',
-                                  marginLeft:10
-                                }}
-                              >
-                                  <Icon 
-                                    style={{
-                                      color: '#ffffff'
-                                    }}  
-                                    name="edit" 
-                                    size={15} />
-                                  <Text style={{fontWeight:'bold', color:'#ffffff'}}> Edit</Text>
-                              </TouchableOpacity>
-                            </View>
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                    color: '#c5c5c5'
+                                  }}>
+                                  Edit >
+                                </Text>
+                              </View>
+                              </View>
                             </View>
                           </View>
                         </TouchableOpacity>
                       )}
-                      keyExtractor={(item, index) => index.toString()}
+                      renderHiddenItem={ ({item}) => (
+                        <View
+                          style={{
+                            flex:1,
+                            flexDirection:'row-reverse',
+                            alignItems:'center',
+                          }}  
+                        >
+                        <TouchableOpacity
+                          onPress={() => 
+                            this.handleOpen(item.id, item.title, item.genre)
+                            //this.handleEdit(item.id)
+                            //this.props.navigation.setParams({id: item.id})
+                          }
+                          //onPress={() => this.handleEdit(item.id)}
+                          style={{
+                            flexDirection:'row', 
+                            borderRadius:5,
+                            elevation:3,
+                            paddingHorizontal:10,
+                            alignItems:'center',
+                            backgroundColor: '#09CE61',
+                            marginHorizontal:10
+                          }}
+                        >
+                          <Icon 
+                            style={{
+                              color: '#ffffff',
+                              paddingVertical:8,
+                            }}  
+                            name="edit" 
+                            size={15} />
+                          <Text style={{fontWeight:'bold', color:'#ffffff'}}> Edit</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => this.handleDetele(item.id)}
+                            style={{
+                              borderRadius:5,
+                              elevation:3,
+                              padding:8,
+                              backgroundColor: '#09CE61',
+                              marginRight:5
+                            }}
+                          >
+                          <Icon style={{color: '#ffffff'}}  name="trash" size={15} />
+                        </TouchableOpacity>
+                        </View>
+                    )}
+                      disableRightSwipe={true}
+                      leftOpenValue={20}
+                      rightOpenValue={-140}
+                      onRowOpen={(rowKey, rowMap) => {
+                          setTimeout(() => {
+                              rowMap[rowKey].closeRow()
+                          }, 2000)
+                      }}
+                      previewRowKey={this.state.data}
                     />
                   </SafeAreaView>
                 </View>
@@ -345,6 +395,7 @@ class WebtoonCreation extends Component {
               }}> 
               <Image
                 style={styles.image}
+                source={{ uri: this.state.photo.uri }}
               />
               <View 
                 style={{
@@ -352,7 +403,7 @@ class WebtoonCreation extends Component {
                   justifyContent:'space-around',
                 }}  
               >
-                <TouchableOpacity style={styles.btn}>
+                <TouchableOpacity style={styles.btn} onPress={() => this.handleChoosePhoto()}>
                   <Text style={styles.textbtn}>Add Image</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn} onPress={()=> this.handleAddtoons()}>
@@ -371,12 +422,14 @@ class WebtoonCreation extends Component {
               Edit Webtoon
             </Text>
             <TextInput
-              placeholder="Title"
+              // editable={true}
+              defaultValue={this.state.defaulttitle}
               style={styles.textinput}
               onChangeText={(text) => this.setState({ titletooon: text})}
             />
             <TextInput
-              placeholder="Genre"
+              // editable={true}
+              defaultValue={this.state.defaultgenre}
               style={styles.textinput}
               onChangeText={(text) => this.setState({genretoon: text})}
             />
@@ -389,6 +442,7 @@ class WebtoonCreation extends Component {
               }}> 
               <Image
                 style={styles.image}
+                source={{ uri: this.state.photo.uri }}
               />
               <View 
                 style={{
@@ -396,7 +450,7 @@ class WebtoonCreation extends Component {
                   justifyContent:'space-around',
                 }}  
               >
-                <TouchableOpacity style={styles.btn}>
+                <TouchableOpacity style={styles.btn} onPress={() => this.handleChoosePhoto()}>
                   <Text style={styles.textbtn}>Add Image</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.btn} onPress={() =>this.handleEdit()}>
@@ -411,7 +465,15 @@ class WebtoonCreation extends Component {
   }
 }
 
-export default WebtoonCreation;
+const mapStateToProps = state => ({
+  token: state.users.data.token,
+  id: state.users.data.id
+})
+
+export default connect(
+  mapStateToProps
+  // mapDispatchToProps
+  )(WebtoonCreation);
 
 const styles = StyleSheet.create({
   container: {
@@ -420,7 +482,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modal4: {
-    height: 350,
+    height: 340,
+    width:330,
     borderRadius:30
   },
   modal: {

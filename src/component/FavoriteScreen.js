@@ -16,6 +16,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axiosInstance from '../service/baseUrl'
 import { SwipeListView } from 'react-native-swipe-list-view'
+import { connect } from 'react-redux';
+import * as actionFavorites from '../_actions/actionFavorites'
 
 const BannerWidth = Dimensions.get('window').width;
 const BannerHeight = 260;
@@ -25,25 +27,14 @@ class FavoriteScreen extends Component {
     super();
 
     this.state = {
-      data: '',
+      search: '',
       isRefreshing: false,
     };
   }
 
   componentDidMount() {
-    return fetch('http://192.168.1.28:3000/api/v1/webtoons?is_favorite=true')
-      .then(response => response.json())
-      .then(responseJson => {
-        this.setState(
-          {
-            data: responseJson,
-          },
-          function() {},
-        );
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    // getAllFavorites()
+    // this.props.getFavorites()
   }
 
   request(searchtext) {
@@ -54,9 +45,9 @@ class FavoriteScreen extends Component {
       },
       url: `/webtoons?isFavorite=true&&title=${searchtext}`,
     }).then(result => {
-      this.setState({data: result.data});
+      this.setState({search: result.data});
       if (!searchtext) {
-        this.setState({data: ''});
+        this.setState({search: ''});
       }
     });
   }
@@ -81,6 +72,7 @@ class FavoriteScreen extends Component {
   }
 
   render() {
+    const {favorites} = this.props
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={{flex: 1, marginHorizontal:10}}>
@@ -139,7 +131,7 @@ class FavoriteScreen extends Component {
                   <SafeAreaView>
                     <SwipeListView
                       useFlatList={true}
-                      data={this.state.data}
+                      data={favorites}
                       horizontal={false}
                       renderItem={({item}) => (
                         <TouchableOpacity
@@ -229,4 +221,18 @@ class FavoriteScreen extends Component {
   }
 }
 
-export default FavoriteScreen;
+const mapStateToProps = state => ({
+  favorites: state.favorites.data
+})
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getFavorites: () => dispatch(actionFavorites.getFavorites())
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+  )(FavoriteScreen);
+

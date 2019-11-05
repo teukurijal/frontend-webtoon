@@ -38,8 +38,8 @@ class DetailScreen extends Component {
 
     this.props.navigation.setParams({
       headerRight: (<Icon
-        name="plus-circle"
-        style={{marginRight: 20, fontSize: 35}}
+        name="plus"
+        style={{marginRight: 20, fontSize: 25}}
         onPress={() => alert('asdasa')}
       />
     ),
@@ -117,7 +117,6 @@ class DetailScreen extends Component {
                   marginHorizontal:1,
                   marginVertical:1
                 }}>
-                <View>
                   <SafeAreaView>
                     <SwipeListView
                       useFlatList={true}
@@ -157,10 +156,10 @@ class DetailScreen extends Component {
                             <View
                               style={{
                                 flex: 1,
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              marginHorizontal: 20,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginHorizontal: 20,
                               }}>
                               <View>
                                 <Text
@@ -177,7 +176,7 @@ class DetailScreen extends Component {
                                   style={{
                                     fontSize: 12,
                                     fontWeight: 'bold',
-                                    color: 'grey'
+                                    color: '#c5c5c5'
                                   }}>
                                   Edit >
                                 </Text>
@@ -196,8 +195,8 @@ class DetailScreen extends Component {
                         >
                             <TouchableOpacity
                               style={{
-                                width:40,
-                                height:40,
+                                width:30,
+                                height:30,
                                 borderRadius:5,
                                 backgroundColor:'#09CE61',
                                 alignItems:'center',
@@ -208,16 +207,16 @@ class DetailScreen extends Component {
                             >
                               <Icon 
                                 style={{
-                                  color: '#000000',
+                                  color: '#ffffff',
                                 }}  
                                 name="pencil" 
-                                size={25} 
+                                size={20} 
                               />
                             </TouchableOpacity>
                             <TouchableOpacity
                               style={{
-                                width:40,
-                                height:40,
+                                width:30,
+                                height:30,
                                 borderRadius:5,
                                 backgroundColor:'#09CE61',
                                 alignItems:'center',
@@ -228,10 +227,10 @@ class DetailScreen extends Component {
                             >
                               <Icon 
                                 style={{
-                                  color: '#000000',
+                                  color: '#ffffff',
                                 }}  
                                 name="trash" 
-                                size={25} 
+                                size={20} 
                               />
                             </TouchableOpacity>
                         </View>
@@ -247,7 +246,7 @@ class DetailScreen extends Component {
                     previewRowKey={this.state.data}
                     />
                   </SafeAreaView>
-                </View>
+                
               </View>
             </View>
           </ScrollView>

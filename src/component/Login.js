@@ -9,10 +9,11 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
-import axiosInstance from '../service/baseUrl';
-import {AsyncStorage} from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import Toast from 'react-native-easy-toast'
+import { connect } from 'react-redux';
+import * as actionUsers from '../_actions/actionUsers';
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -24,6 +25,8 @@ class Login extends Component {
       validatedemail: false,
       validatedpass: false,
       loading: false,
+      isSuccess: this.props.isLoading,
+      isError: this.props.isErorr
     };
   }
 
@@ -31,29 +34,21 @@ class Login extends Component {
     SplashScreen.hide();
   }
 
-  handleSubmit = () => {
+
+  handleSubmit = async () => {
+    const { useremail, password } = this.state
+
     if (this.state.validatedemail && this.state.validatedpass) {
-      axiosInstance({
-        method: 'POST',
-        url: '/login',
-        data: {
-          email: this.state.useremail,
-          password: this.state.password,
-        },
-      })
-        .then(response => {
-          //console.log(response);
-          AsyncStorage.setItem('Token', response.data.token);
-          this.props.navigation.navigate('ForYou');
-        })
-        .catch(error => {
-          alert(error);
-          //console.log(error);
-        });
-      } else {
-        this.refs.toast.show('Wrong Email or Password');
+      try {
+        await this.props.getUsers(useremail, password);
+        this.props.navigation.navigate('ForYou')
+      } catch (error) {
+        this.refs.toast.show('Wrong Email or Password')
+      }
+    } else {
+      this.refs.toast.show('Invalid Email')
     }
-  };
+  }
 
   handleVisibelpassword() {
     this.setState({
@@ -84,7 +79,6 @@ class Login extends Component {
       });
     } else {
       this.setState({
-        // password: text,
         validatedpass: true,
       });
     }
@@ -92,8 +86,6 @@ class Login extends Component {
 
   render() {
     const disableLogin = true
-    ////console.log(this.props.navigation)
-
     return (
       <KeyboardAvoidingView  style={styles.container} behavior="padding" enabled>
         <Toast 
@@ -174,7 +166,22 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapStateToProps = state => ({
+  token: state.users.data.token,
+  isLoading: state.users.isLoading,
+  isSuccess: state.users.isSuccess
+})
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getUsers: (useremail, password) => dispatch(actionUsers.getUsers(useremail, password)),
+  }
+}
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+  )(Login);
+
 
 const styles = StyleSheet.create({
   emailcontainer: {

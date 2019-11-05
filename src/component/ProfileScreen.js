@@ -2,22 +2,17 @@ import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/Ionicons';
+import { connect } from 'react-redux';
 
-export default class ProfileScreen extends Component {
+
+class ProfileScreen extends Component {
   constructor() {
     super();
 
     this.state = {
-      image: '',
-      name: 'Teuku Rijal'
+      image: 'http://192.168.1.131:3000/profile-1571917689166FB_IMG_1567813714025.jpg',
     };
-  }
-
-  componentDidMount() {
-    const url= 'http://192.168.1.28:3000/profile-1.png';
-    this.setState({ 
-      image: url
-    })
   }
 
   render() {
@@ -41,7 +36,7 @@ export default class ProfileScreen extends Component {
           </View>
           <View>
             <Text style={{fontSize: 30, color: 'black', marginLeft:10}}>
-              {this.state.name}
+              {this.props.name}
             </Text>
           </View>
         </View>
@@ -69,6 +64,36 @@ export default class ProfileScreen extends Component {
             </View>
           </TouchableOpacity>
           <TouchableOpacity
+            onPressOut={() => alert('no function')}
+            style={styles.menu}
+          >
+            <View style={styles.btncontainer}>
+                 <Icon2 name='ios-settings' color={'#09CE61'} size={20} />
+            </View>
+            <View 
+              style={styles.btncontainer}>
+                <Text 
+                  style={{
+                    fontSize: 20
+                  }}>Setting</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPressOut={() => alert('no function')}
+            style={styles.menu}
+          >
+            <View style={styles.btncontainer}>
+                 <Icon2 name='md-help-circle' color={'#09CE61'} size={20} />
+            </View>
+            <View 
+              style={styles.btncontainer}>
+                <Text 
+                  style={{
+                    fontSize: 20
+                  }}>Help & Support</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
             onPressOut={() => this.props.navigation.navigate('Logout')}
             style={styles.menu}
           >
@@ -89,6 +114,14 @@ export default class ProfileScreen extends Component {
   }
 }
 
+const MapStateToProps = state => ({
+  name: state.users.data.name
+})
+
+export default connect(
+  MapStateToProps
+  )(ProfileScreen)
+
 const styles = StyleSheet.create({
   btncontainer: {
     alignItems: 'center',
@@ -107,6 +140,10 @@ const styles = StyleSheet.create({
   },
   menucontainer: {
     flex:3,
+    backgroundColor:'white',
+    borderTopRightRadius: 100,
+    // borderWidth:0.4,
+    // elevation:2
   },
   menu: {
     marginBottom:30,
